@@ -137,12 +137,17 @@ class Pictures extends Component {
 			  // left off here this is going to be a hard line
 		  // const pic_arr = this.props.pics[0].map( x => "<img styles='opacity: 0.5' onmouseover='styles='opacity: 1;'' onmouseout='styles='opacity: 0.5;'' class=img-thumbnail src=" + x +  "onClick='LoadImage('" + x + "')' width=80 height=80 />');
 		   console.log(this.props.pics);
+	          // var pics = this.props.pics;
 		   console.log(this.props.pics);
 			  console.log(this);
+//   			   <img src={this.props.pics[0].name} /> // this works in the return, but I need to 
+			  //   			   find the child
+			  //   			   it works in that it shows, but the carousel doesn't work
+
 		  return (
 			  <div>
 			  Looooook Heeeere
-			  <img src={this.props.pics.children} />
+			  <img src={this.props.pics[0].name} />
 			  </div>
    		 );
 

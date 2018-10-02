@@ -128,6 +128,7 @@ class Carousel extends Component {
 }
 
 class Pictures extends Component {
+	//I left here
 //	          pic_arr = [];
 		  render(){
 	        //  console.log({this.props.pic});
@@ -136,12 +137,13 @@ class Pictures extends Component {
 			  // left off here this is going to be a hard line
 		  // const pic_arr = this.props.pics[0].map( x => "<img styles='opacity: 0.5' onmouseover='styles='opacity: 1;'' onmouseout='styles='opacity: 0.5;'' class=img-thumbnail src=" + x +  "onClick='LoadImage('" + x + "')' width=80 height=80 />');
 		   console.log(this.props.pics);
+	          // var pics = this.props.pics;
 		   console.log(this.props.pics);
 			  console.log(this);
 		  return (
 			  <div>
 			  Looooook Heeeere
-			  <img src={this.props.pics.children} />
+			  <img src={this.props.pics[0].name} />
 			  </div>
    		 );
 
