@@ -15,8 +15,8 @@ class App extends Component {
       getPics(){
 	var pics = new Array();
 	var parent = new Array();
-	parent.name = 'one.jpg';
-	parent.children = ['two.jpg', 'three.jpg', 'four.jpg'];
+	parent.name = './img/one.jpg';
+	parent.children = ['./img/two.jpg', './img/three.jpg', './img/four.jpg'];
 	pics.push(parent)
 	this.setState({ pics: pics });
 	  console.log(pics);
@@ -26,8 +26,7 @@ class App extends Component {
       <div className="App">
 	    <Head />
 	    <JumboTron />
-	    <Carousel />
-				<Pics pics={this.state.pics} />
+	    <Carousel pics={this.state.pics} />
       </div>
 	 );
   }
@@ -35,18 +34,6 @@ class App extends Component {
 
 export default App;
 
-class Pics extends Component {
-		  render(){
-		  return (
-			  <ul>
-			  {console.log("hi")}
-			  {this.props.pics[0].name}
-				    {this.props.pics[0]['children']} 
-			  </ul>
-   		 );
-
-		  }
-}
 
 class Head extends Component {
 	render() {
@@ -113,25 +100,18 @@ class Carousel extends Component {
 	  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
   <div class="carousel-inner">
     <div class="carousel-item active">
-      <img class="d-block w-100" src="./img/one.jpg" alt="First slide" id="firstslide" />
+      <img class="d-block w-100" src={this.props.pics[0].name} alt="First slide" id="firstslide" />
+			  
       <div class="carousel-caption">
 	      <p class="overimage" id='firstslidecaption'>Here is placeholder caption.  I hope I don't leave this on the site. :)</p> 
 	      <div class="subimages">
-		      <img styles="opacity: 0.5" onmouseover="styles='opacity: 1;'" onmouseout="styles='opacity: 0.5;'" class="img-thumbnail" src="./img/one.jpg" onClick="LoadImage('./img/one.jpg')" width="80" height="80" />
-		      <img styles="opacity: 0.5;" onmouseover="styles='opacity: 1;'" onmouseout="styles='opacity: 0.5;'" class="img-thumbnail" src="./img/two.jpg" onClick="LoadImage('./img/two.jpg')" height="80" width="80" />
-		      <img styles="opacity: 0.5;" onmouseover="styles='opacity: 1;'" onmouseout="styles='opacity: 0.5;'" class="img-thumbnail" src="./img/three.jpg" onClick="LoadImage('./img/three.jpg')" height="80" width="80" />
-		      <img styles="opacity: 0.5;" onmouseover="styles='opacity: 1;'" onmouseout="styles='opacity: 0.5;'" class="img-thumbnail" src="./img/four.jpg" onClick="LoadImage('./img/four.jpg')" height="80" width="80" />
+			{console.log(this.props.pics)}		    
+			<Pictures pics={this.props.pics} />
 		</div>
 			</div>
 			</div>
 			</div>
 			</div>
-    <div class="carousel-item">
-      <img class="d-block w-100" src="./img/two.jpg" alt="Second slide" />
-    </div>
-    <div class="carousel-item">
-      <img class="d-block w-100" src="./img/three.jpg" alt="Third slide" />
-    </div>
   </div>
   <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
     <span class="carousel-control-prev-icon" aria-hidden="true"></span>
@@ -147,3 +127,23 @@ class Carousel extends Component {
 	}
 }
 
+class Pictures extends Component {
+//	          pic_arr = [];
+		  render(){
+	        //  console.log({this.props.pic});
+		  // this.state.pic_arr = this.props.pics[0];
+		  // const pic_arr = this.props.pics[0].map( x => x );
+			  // left off here this is going to be a hard line
+		  // const pic_arr = this.props.pics[0].map( x => "<img styles='opacity: 0.5' onmouseover='styles='opacity: 1;'' onmouseout='styles='opacity: 0.5;'' class=img-thumbnail src=" + x +  "onClick='LoadImage('" + x + "')' width=80 height=80 />');
+		   console.log(this.props.pics);
+		   console.log(this.props.pics);
+			  console.log(this);
+		  return (
+			  <div>
+			  Looooook Heeeere
+			  <img src={this.props.pics.children} />
+			  </div>
+   		 );
+
+		  }
+}
