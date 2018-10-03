@@ -40,18 +40,7 @@ class Head extends Component {
 	render() {
 			  return(
 						 <div>
-<html lang="en" />
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no" /> 
 
-  <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous" />
-
-  <link href="album.css" rel="stylesheet" />
-
-  <title>Solar Photovoltaic Integration in California</title>
-</head>
-<body />
 						   <div class="collapse bg-dark" id="navbarHeader">
         <div class="container">
           <div class="row">
@@ -141,53 +130,44 @@ class Carousel extends Component {
 }
 
 class Pictures extends Component {
-	//I left here
-//	          pic_arr = [];
-	onHover(msg){
-		console.log('hi');
-		console.log(msg);
-	}
-	onMouseOff(msg){
-		console.log(msg);
-	}
-	  render(){
-	 var subImageStyle = {
-			  opacity: '0.5',
-			  width: '100%',
-			  display: 'flex',
-			  justifyContent: 'space-around',
-			  alignItems: 'flex-end',
-			}
+  constructor() {
+    super();
+    this.state = {
+      opacity: "0.5"
+    };
+  }
 
-	        //  console.log({this.props.pic});
-		  // this.state.pic_arr = this.props.pics[0];
-		  // const pic_arr = this.props.pics[0].map( x => x );
-			  // left off here this is going to be a hard line
-		  // const pic_arr = this.props.pics[0].map( x => "<img styles='opacity: 0.5' onmouseover='styles='opacity: 1;'' onmouseout='styles='opacity: 0.5;'' class=img-thumbnail src=" + x +  "onClick='LoadImage('" + x + "')' width=80 height=80 />');
-		   console.log(this.props.pics);
-	          // var pics = this.props.pics;
-		   console.log(this.props.pics);
-			  console.log(this);
-//   			   <img src={this.props.pics[0].name} /> // this works in the return, but I need to 
-			  //   			   find the child
-			  //   			   it works in that it shows, but the carousel doesn't work
+  mouseOut() {
+    this.setState({ opacity: "0.5" });
+  }
 
-			  //<img src={this.props.pics[0].name} />
-			  // <img src={this.props.pics[0].children} />
-			  console.log(this.props.pics[0].children);
-		  console.log(this);
-			  var childItems = this.props.pics[0].children.map( child => {
-				  return(
-					  <img styles="opacity: 0.5;" onMouseOver={console.log('hi')} onMouseOut={this.onMouseOff('bye')} class="img-thumbnail" src={child} onClick="LoadImage('{child}')" height="80" width="80" />
-				  )
-			     });
-					  
-		  return (
-			  <div class="subImageStyle" style={subImageStyle}>
-			  {childItems}
-			  </div>
-   		 );
+  mouseOver() {
+    this.setState({ opacity: "1" });
+  }
 
-		  }
+  render() {
+    var subImageStyle = {
+      opacity: this.state.opacity,
+      width: "100%",
+      display: "flex",
+      justifyContent: "space-around",
+      alignItems: "flex-end"
+    };
+    var childItems = this.props.pics[0].children.map(child => {
+      return (
+        <img
+          key={child}
+          onMouseOut={() => this.mouseOut()}
+          onMouseOver={() => this.mouseOver()}
+          class="img-thumbnail"
+          src={child}
+          height="80"
+          width="80"
+        />
+      );
+    });
+
+    return <div style={subImageStyle}>{childItems}</div>;
+  }
 }
 
