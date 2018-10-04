@@ -19,7 +19,7 @@ class App extends Component {
 	parent.children = ['./img/two.jpg', './img/three.jpg', './img/four.jpg'];
 	pics.push(parent)
 	this.setState({ pics: pics });
-	  console.log(pics);
+	 // console.log(pics);
       }
   render() {
     return (
@@ -95,40 +95,159 @@ class JumboTron extends Component {
 }
 
 class Carousel extends Component {
-	render() {
-		return(
-			   <div class="album py-5 bg-light">
+  render() {
+    return (
+      <div class="album py-5 bg-light">
         <div class="container">
-	  <div id="carouselExampleControls" class="carousel slide" data-ride="carousel">
-  <div class="carousel-inner">
-    <div class="carousel-item active">
-      <img class="d-block w-100" src={this.props.pics[0].name} alt="First slide" id="firstslide" />
-			  
-      <div class="carousel-caption">
-	      <p class="overimage" styles="background-color: rgba(200, 200, 200, 0.5);" id='firstslidecaption'>Here is placeholder caption.  I hope I don't leave this on the site. :)</p> 
-	      <div>
-			{console.log(this.props.pics)}		    
-			<Pictures pics={this.props.pics} />
-		</div>
-			</div>
-			</div>
-			</div>
-			</div>
-  </div>
-  <a class="carousel-control-prev" href="#carouselExampleControls" role="button" data-slide="prev">
-    <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-    <span class="sr-only">Previous</span>
-  </a>
-  <a class="carousel-control-next" href="#carouselExampleControls" role="button" data-slide="next">
-    <span class="carousel-control-next-icon" aria-hidden="true"></span>
-    <span class="sr-only">Next</span>
-  </a>
-</div>
+          <div
+            id="carouselExampleControls"
+            class="carousel slide"
+            data-ride="carousel"
+          >
+            <div class="carousel-inner">
+              <div class="carousel-item active">
+                <img
+                  class="d-block w-100"
+                  src={this.props.pics[0].name}
+                  alt="First slide"
+                  id="firstslide"
+                />
 
-		);
-	}
+                <div class="carousel-caption">
+                  <p
+                    class="overimage"
+                    styles="background-color: rgba(200, 200, 200, 0.5);"
+                    id="firstslidecaption"
+                  >
+                    Here is placeholder caption. I hope I don't leave this on
+                    the site. :)
+                  </p>
+                  <div>
+                    <Pictures pics={this.props.pics} />
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        <a
+          class="carousel-control-prev"
+          href="#carouselExampleControls"
+          role="button"
+          data-slide="prev"
+        >
+          <span class="carousel-control-prev-icon" aria-hidden="true" />
+          <span class="sr-only">Previous</span>
+        </a>
+        <a
+          class="carousel-control-next"
+          href="#carouselExampleControls"
+          role="button"
+          data-slide="next"
+        >
+          <span class="carousel-control-next-icon" aria-hidden="true" />
+          <span class="sr-only">Next</span>
+        </a>
+      </div>
+    );
+  }
 }
 
+
+class Pictures extends Component {
+  constructor(props) {
+    super(props);
+	  var childArr = []
+	//  console.log(this.props.pics[0].children)
+	 // childArr = this.props.pics[0].children.map(child => ( child '0.5' ))
+	  this.props.pics[0].children.forEach(function(child) {
+		  childArr.push([child, '0.5'])
+	  });
+	//  console.log(childArr)
+		  this.state = {
+			  childArr: childArr, 
+    			  opacity: "0.5"
+		  }
+   // this.state = {
+    //  opacity: "0.5"
+  //  };
+	 // console.log(this.state.childArr)
+  }
+
+  mouseOut(child) {
+	  var len = this.state.childArr.length;
+	  for (var i=0; i<len; i++) {
+		  if ( this.state.childArr[0] === child ) {
+			  this.state.childArr[1] = '0.5';
+		  }
+	   }
+
+	  // this.state.childArr.forEach(function(child) {
+	// 	  if (this.state.childArr[0] === child) {
+	// 		  this.state.childArr[1] = '0.5';
+	// 	  }
+	  // 	}
+	//   );
+	  //var index = this.state.childArr.indexOf([child, '1']);
+//	  if (index !== -1) {
+//		  this.state.childArr[index] = [child, '0.5'];
+//	  }
+  }
+
+  mouseOver(child) {
+//	  console.log(this.state.childArr)
+//	  console.log(this.state.childArr[0])
+//	  console.log(this.state.childArr[1])
+	  var len = this.state.childArr.length;
+	  for (var i=0; i<len; i++) {
+		  if ( this.state.childArr[i][0] === child ) {
+			  this.state.childArr[i][1] = '1';
+		  }
+	   }
+	//  console.log(this.state.childArr)
+
+
+	//  var index = this.state.childArr.indexOf(["{child}", "0.5"]);
+//	  console.clear;
+//	  console.log(this.state.childArr)
+//	  console.log(child)
+//	  console.log(this.state.childArr[index])
+
+//	  if (index !== -1) {
+//		  this.state.childArr[index] = [child, '1'];
+//	  }
+  }
+
+  render() {
+    var subDivStyle = {
+	    opacity: this.state.opacity,
+      width: "100%",
+      display: "flex",
+      justifyContent: "space-around",
+      alignItems: "flex-end"
+    };
+	  // I left off here
+	var len = this.state.childArr.length;
+	  for(var i=0; i<len; i++) {
+	     var subImgStyle = "opacity: " + this.state.childArr[i][1]; 
+		  var childItemsreturn(
+      		  <img
+	  		    style={subImgStyle}
+          key={this.state.childArr[i]}
+          onMouseOut={() => this.mouseOut(this.state.childArr[i])}
+          onMouseOver={() => this.mouseOver(this.state.childArr[i])}
+          class="img-thumbnail"
+          src={this.state.childArr[i]}
+          height="80"
+          width="80"
+        />
+		  );
+    };
+
+    return <div style={subDivStyle}>{childItems}</div>;
+  }
+}
+/*
 class Pictures extends Component {
   constructor() {
     super();
@@ -170,4 +289,4 @@ class Pictures extends Component {
     return <div style={subImageStyle}>{childItems}</div>;
   }
 }
-
+*/
