@@ -2,30 +2,13 @@ import React, { Component } from 'react';
 import './App.css';
 
 class App extends Component {
- 	constructor() {
-		super();
-		this.state = {
-			pics: []
-		}
-	}
-
-  	componentWillMount() {
-	  this.getPics();
-	}
-      getPics(){
-	var pics = [];
-	var parent = [];
-	parent.name = './img/1.jpg';
-	parent.children = ['./img/1_1.jpg', './img/1_2.jpg', './img/1_3.jpg'];
-	pics.push(parent)
-	this.setState({ pics: pics });
-      }
+	DB = new DB;
   render() {
     return (
       <div className="App">
 	    <Head />
 	    <JumboTron />
-	    <Carousel pics={this.state.pics} />
+	    <Carousel />
       </div>
 	 );
   }
@@ -33,6 +16,66 @@ class App extends Component {
 
 export default App;
 
+class DB {
+	// this is a microscopic database acting on pics array
+	      // picture data is going to be like a relational database
+	      // every picture has [unique id, source, parent id]
+	      // if parent_id is zero then it is a parent
+	      // I don't think there will ever be any grandchildren
+	      // so this should suffice
+	constructor(id, src, parent_id) {
+		this.id = id;
+		this.src = src;
+		this.parent_id = parent_id;
+		this.pic = [];
+		this.pics = [];
+		this.getData();
+	}
+
+	getData() {
+	      var id = 1;
+	      var src = './img/1.jpg';
+	      var parent_id = 0;
+	      var pic = [id, src, parent_id];
+		var pics = [];
+	      pics.push(pic);
+	      id = 2;
+	      src = './img/1_1.jpg'
+	      parent_id = 1;
+	      pic = [id, src, parent_id]
+	      pics.push(pic);
+	      id = 3;
+	      src = './img/1_2.jpg'
+	      parent_id = 1;
+	      pic = [id, src, parent_id]
+	      pics.push(pic);
+	      id = 4;
+	      src = './img/1_3.jpg'
+	      parent_id = 1;
+	      pic = [id, src, parent_id]
+	      pics.push(pic);
+	this.pics = pics;
+		console.log(this.pics)
+	}
+
+	static select(selection, condition) {
+		// condition is of form x=y
+		var condArr = condition.split('=');
+		var condName = condArr[0];
+		var condVal = condArr[1];
+		if (condName === 'id') {  // this case is easy, id being ordered is enforced
+			condVal = parseInt(condVal); // it will be an int, but typing is the rage 
+			var index = condVal - 1;
+			console.log(this)
+			var thispic = this.pics[index]
+		}
+		// only working for id now - needs more work
+		// there are only three choices and only ever will be - nothing fancy here
+		if (selection === 'src') {
+			return (thispic[1]);
+		}
+	}
+}
 
 class Head extends Component {
 
@@ -95,6 +138,10 @@ class JumboTron extends Component {
 
 class Carousel extends Component {
   render() {
+	  // I get the whole pic array, need to decide which one to display
+	  // as the main pic first
+	  // SELECT src FROM pics WHERE id=1
+	  var firstpic = DB.select('src', 'id=1')
     return (
       <div className="album py-5 bg-light">
         <div className="container">
@@ -107,7 +154,7 @@ class Carousel extends Component {
               <div className="carousel-item active">
                 <img
                   className="d-block w-100"
-                  src={this.props.pics[0].name}
+                  src={firstpic}
                   alt="First slide"
                   id="firstslide"
                 />
