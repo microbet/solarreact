@@ -15,11 +15,10 @@ class App extends Component {
       getPics(){
 	var pics = [];
 	var parent = [];
-	parent.name = './img/one.jpg';
-	parent.children = ['./img/two.jpg', './img/three.jpg', './img/four.jpg'];
+	parent.name = './img/1.jpg';
+	parent.children = ['./img/1_1.jpg', './img/1_2.jpg', './img/1_3.jpg'];
 	pics.push(parent)
 	this.setState({ pics: pics });
-	 // console.log(pics);
       }
   render() {
     return (
@@ -167,32 +166,16 @@ class Pictures extends Component {
    if (this.props.pics) {
       ImageSources = this.props.pics[0].children.map(source => {
 	      return (
-		      <ChildPic src={source} />
+		      <ChildPic src={source} parentSrc={this.props.pics[0].name} />
 	      );
         });
 
    }
-// I really want to return three separate childpics - trying to figure out when react
-	  // just does this automatically, or how can you include the return in loop
-	  // I guess look back at how it was done with topics in the learnreact job
     return (<div style={subImageStyle}>{ImageSources}</div>);
   }
 }
 
 class ChildPic extends Component {
-
-	render(){
-		console.log(this.props.src)
-		// not working yet
-		return(
-			<img className="img-thumbnail" height="80" width="80" src={this.props.src} />
-		);
-	}
-	
-}
-
-/*
-class Pictures extends Component {
   constructor() {
     super();
     this.state = {
@@ -200,37 +183,62 @@ class Pictures extends Component {
     };
   }
 
-  mouseOut() {
-    this.setState({ opacity: "0.5" });
+  mouseOut(src) {
+    this.setState({
+      opacity: "0.5"
+    });
   }
 
-  mouseOver() {
-    this.setState({ opacity: "1" });
+  mouseOver(src) {
+    this.setState({
+      opacity: "1"
+    });
   }
+
+	handleClick(src) {
+		console.log(this.props.src)
+		console.log(this.props.parentSrc)
+
+	var text;
+	document.getElementById('firstslide').src = this.props.src; // "./img/two.jpg";
+		// so the text needs to be in the pic array
+		// need interface to upload pics
+		// need json file to store info
+	if ( this.props.src == "./img/1_1.jpg" ) {
+		text = "This gives you a good look at how we mount on an existing torchdown roof.  The grey dams surround the mounts and a liquid sealant is poured in.  It hardens to provide an inpenetrable seal.";
+	}
+	if ( this.props.src == "./img/1.jpg" ) {
+		text = "This array is tilted slightly to get more production on a nearly flat roof.";
+	}
+	if ( this.props.src == "./img/1_2.jpg" ) {
+		text = "The disconnect and main service panel.";
+	}
+	if ( this.props.src == "./img/1_3.jpg" ) {
+		text = "They have a flush mounted portion on a pitched roof.  This is a pretty large system.";
+	}
+	document.getElementById('firstslidecaption').innerHTML = text;
+}
+
+		// what if I make the child into the parent and the parent into the child?
 
   render() {
-    var subImageStyle = {
-      opacity: this.state.opacity,
-      width: "100%",
-      display: "flex",
-      justifyContent: "space-around",
-      alignItems: "flex-end"
+    var thumbStyle = {
+      opacity: this.state.opacity
     };
-    var childItems = this.props.pics[0].children.map(child => {
-      return (
-        <img
-          key={child}
-          onMouseOut={() => this.mouseOut()}
-          onMouseOver={() => this.mouseOver()}
-          class="img-thumbnail"
-          src={child}
-          height="80"
-          width="80"
-        />
-      );
-    });
-
-    return <div style={subImageStyle}>{childItems}</div>;
+    return (
+      <img
+        onMouseOut={() => this.mouseOut(this.props.src)}
+        onMouseOver={() => this.mouseOver(this.props.src)}
+	onClick={() => this.handleClick(this.props.src)}
+        style={thumbStyle}
+        className="img-thumbnail"
+        height="80"
+        width="80"
+        src={this.props.src}
+	alt="solar"
+	    key={this.props.src}
+      />
+    );
   }
 }
-*/
+
