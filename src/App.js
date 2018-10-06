@@ -156,6 +156,10 @@ class Carousel extends Component {
 	  // SELECT src FROM pics WHERE id=1
 	  var db = new MicroDB();
 	  var mainpic = db.select('src', 'id=1')
+	  // I think mainpic needs to be put into the state here and then have
+	  // a callback function sent down to Pictures, which sends a callback
+	  // down to ChildPic so that mainpic can be changed when the user
+	  // clicks on the thumbnail
     return (
       <div className="album py-5 bg-light">
         <div className="container">
@@ -231,12 +235,10 @@ class Pictures extends Component {
 	  var db = new MicroDB();
 	   // really need to figure out why this is called more than once at this point
 	  var familyArr = db.getFamily(mainpicID);
-	   console.log(ImageSources)
-
 	   
       var ImageSources = familyArr.map(memberArr => {
 	      return (
-		      <ChildPic src={memberArr[1]} key={memberArr[0]} id={memberArr[0]} mainsrc={this.props.mainpicArr[1]} />
+		      <ChildPic src={memberArr[1]} key={memberArr[0]} id={memberArr[0]} mainsrc={this.props.mainpicArr[1]} mainid={this.props.mainpicArr[0]} />
 	      );
         });
 
@@ -265,16 +267,40 @@ class ChildPic extends Component {
     });
   }
 
-	handleClick(src, id) {
-		console.log(this.props.src)
+	handleClick(src, id, mainsrc, mainid) {
+		console.log(this.props.src) // should be 1_1.jpg
+		console.log(this.props.id) // should be 2
+		console.log(this.props.mainsrc)  // should be 1.jpg
+		console.log(this.props.mainid) // should be 1
+		console.log(src)
+		console.log(id)
+		console.log(mainsrc)
+		console.log(mainid)
 
 	var text;
-	document.getElementById('firstslide').src = this.props.src; 
-	document.getElementById(id).src = this.props.mainsrc; 
+	document.getElementById('firstslide').src = this.src; 
+	document.getElementById(this.id).src =  this.mainsrc; 
+		var temp = this.mainsrc;
+		this.mainsrc = this.src;
+		this.src = temp;
+		// I left off here.  getting tired.  I think the thumb and the mainpic are 
+		// different objects and even the thumbs are different object from each
+		// other and they don't share "this".  The data will either have to 
+		// be changed in props or state - probably props or the DB object, but
+		// for Reactness I should use props and leave DB for the immutable data
+		// source only
+
 		// family is just getting children so far and while I'm switching images
 		// i'm not doing anything to the props, so the handleclick doesn't act
 		// any different.  I need to use something other than props
 		// to get what's in main after I get here
+		//
+		// what I think I need is just somethng that says what the main
+		// pic is and have that in either props or state and then always
+		// read that and get the family to show for thumbs
+		//
+		// try setting a props property in here and see if it fails
+		this.props.src = './img/badimage.jpg';
 
 	if ( this.props.src === "./img/1_1.jpg" ) {
 		text = "This gives you a good look at how we mount on an existing torchdown roof.  The grey dams surround the mounts and a liquid sealant is poured in.  It hardens to provide an inpenetrable seal.";
@@ -294,22 +320,26 @@ class ChildPic extends Component {
 		// what if I make the child into the parent and the parent into the child?
 
   render() {
+	  this.src = this.props.src;
+	  this.id = this.props.id;
+	  this.mainsrc = this.props.mainsrc;
+	  this.mainid = this.props.mainid;
     var thumbStyle = {
       opacity: this.state.opacity
     };
     return (
       <img
-        onMouseOut={() => this.mouseOut(this.props.src)}
-        onMouseOver={() => this.mouseOver(this.props.src)}
-	onClick={() => this.handleClick(this.props.src, this.props.id)}
+        onMouseOut={() => this.mouseOut(this.src)}
+        onMouseOver={() => this.mouseOver(this.src)}
+	onClick={() => this.handleClick(this.src, this.id, this.mainsrc, this.mainid)}
         style={thumbStyle}
         className="img-thumbnail"
         height="80"
         width="80"
-        src={this.props.src}
+        src={this.src}
 	alt="solar"
-	    key={this.props.id}
-	    id={this.props.id}
+	    key={this.id}
+	    id={this.id}
       />
     );
   }
