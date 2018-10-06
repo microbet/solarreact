@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 import './App.css';
 
 class App extends Component {
-	DB = new DB;
   render() {
     return (
       <div className="App">
@@ -16,19 +15,16 @@ class App extends Component {
 
 export default App;
 
-class DB {
+class MicroDB {
 	// this is a microscopic database acting on pics array
-	      // picture data is going to be like a relational database
-	      // every picture has [unique id, source, parent id]
-	      // if parent_id is zero then it is a parent
-	      // I don't think there will ever be any grandchildren
-	      // so this should suffice
+	// it's a little like a relational database, but not really
+	// the data is and must be very structured  id's go in order only
+	// children always immediately follow their parent
 	constructor(id, src, parent_id) {
-		this.id = id;
+		this.id = 1;
 		this.src = src;
 		this.parent_id = parent_id;
 		this.pic = [];
-		this.pics = [];
 		this.getData();
 	}
 
@@ -54,19 +50,18 @@ class DB {
 	      parent_id = 1;
 	      pic = [id, src, parent_id]
 	      pics.push(pic);
-	this.pics = pics;
-		console.log(this.pics)
+	 this.pics = pics;
 	}
 
-	static select(selection, condition) {
+	select(selection, condition) {
 		// condition is of form x=y
+		// I think I should probably return src and id everytime
 		var condArr = condition.split('=');
 		var condName = condArr[0];
 		var condVal = condArr[1];
 		if (condName === 'id') {  // this case is easy, id being ordered is enforced
-			condVal = parseInt(condVal); // it will be an int, but typing is the rage 
-			var index = condVal - 1;
-			console.log(this)
+			condVal = parseInt(condVal, 10); // it will be an int, but typing is the rage 
+			var index = condVal - 1; // id is ALWAYS index+1
 			var thispic = this.pics[index]
 		}
 		// only working for id now - needs more work
@@ -74,6 +69,24 @@ class DB {
 		if (selection === 'src') {
 			return (thispic[1]);
 		}
+	}
+
+	getFamily(id) {
+		// if they are a parent, get their children
+	 	var childArr = this.getChildren(id);
+		return childArr;
+	}
+
+	getChildren(id) {
+		var childArr = [];
+		var i = id;
+		var len = this.pics.length;
+		while (i < len) {
+			if (this.pics[i][2] !== id) { break; }
+			childArr.push([this.pics[i][0], this.pics[i][1]]);
+			i++
+		}
+		return childArr;
 	}
 }
 
@@ -141,7 +154,8 @@ class Carousel extends Component {
 	  // I get the whole pic array, need to decide which one to display
 	  // as the main pic first
 	  // SELECT src FROM pics WHERE id=1
-	  var firstpic = DB.select('src', 'id=1')
+	  var db = new MicroDB();
+	  var mainpic = db.select('src', 'id=1')
     return (
       <div className="album py-5 bg-light">
         <div className="container">
@@ -154,7 +168,7 @@ class Carousel extends Component {
               <div className="carousel-item active">
                 <img
                   className="d-block w-100"
-                  src={firstpic}
+                  src={mainpic}
                   alt="First slide"
                   id="firstslide"
                 />
@@ -169,7 +183,7 @@ class Carousel extends Component {
                     the site. :)
                   </p>
                   <div>
-                    <Pictures pics={this.props.pics} />
+                    <Pictures mainpicArr={[1, mainpic]} />
                   </div>
                 </div>
               </div>
@@ -209,11 +223,20 @@ class Pictures extends Component {
       justifyContent: "space-around",
       alignItems: "flex-end"
     };
-   let ImageSources;
-   if (this.props.pics) {
-      ImageSources = this.props.pics[0].children.map(source => {
+	  // I left off here.  I think I need to know from carousel whether
+	  // a parent or child is in the main picture
+   if (this.props.mainpicArr) {
+	   var mainpicID = this.props.mainpicArr[0];
+	   // ImageSources = "SELECT src FROM pics WHERE sameFamily(mainpicID_"
+	  var db = new MicroDB();
+	   // really need to figure out why this is called more than once at this point
+	  var familyArr = db.getFamily(mainpicID);
+	   console.log(ImageSources)
+
+	   
+      var ImageSources = familyArr.map(memberArr => {
 	      return (
-		      <ChildPic src={source} parentSrc={this.props.pics[0].name} />
+		      <ChildPic src={memberArr[1]} key={memberArr[0]} id={memberArr[0]} mainsrc={this.props.mainpicArr[1]} />
 	      );
         });
 
@@ -226,13 +249,13 @@ class ChildPic extends Component {
   constructor() {
     super();
     this.state = {
-      opacity: "0.5"
+      opacity: "0.7"
     };
   }
 
   mouseOut(src) {
     this.setState({
-      opacity: "0.5"
+      opacity: "0.7"
     });
   }
 
@@ -242,25 +265,27 @@ class ChildPic extends Component {
     });
   }
 
-	handleClick(src) {
+	handleClick(src, id) {
 		console.log(this.props.src)
-		console.log(this.props.parentSrc)
 
 	var text;
-	document.getElementById('firstslide').src = this.props.src; // "./img/two.jpg";
-		// so the text needs to be in the pic array
-		// need interface to upload pics
-		// need json file to store info
-	if ( this.props.src == "./img/1_1.jpg" ) {
+	document.getElementById('firstslide').src = this.props.src; 
+	document.getElementById(id).src = this.props.mainsrc; 
+		// family is just getting children so far and while I'm switching images
+		// i'm not doing anything to the props, so the handleclick doesn't act
+		// any different.  I need to use something other than props
+		// to get what's in main after I get here
+
+	if ( this.props.src === "./img/1_1.jpg" ) {
 		text = "This gives you a good look at how we mount on an existing torchdown roof.  The grey dams surround the mounts and a liquid sealant is poured in.  It hardens to provide an inpenetrable seal.";
 	}
-	if ( this.props.src == "./img/1.jpg" ) {
+	if ( this.props.src === "./img/1.jpg" ) {
 		text = "This array is tilted slightly to get more production on a nearly flat roof.";
 	}
-	if ( this.props.src == "./img/1_2.jpg" ) {
+	if ( this.props.src === "./img/1_2.jpg" ) {
 		text = "The disconnect and main service panel.";
 	}
-	if ( this.props.src == "./img/1_3.jpg" ) {
+	if ( this.props.src === "./img/1_3.jpg" ) {
 		text = "They have a flush mounted portion on a pitched roof.  This is a pretty large system.";
 	}
 	document.getElementById('firstslidecaption').innerHTML = text;
@@ -276,14 +301,15 @@ class ChildPic extends Component {
       <img
         onMouseOut={() => this.mouseOut(this.props.src)}
         onMouseOver={() => this.mouseOver(this.props.src)}
-	onClick={() => this.handleClick(this.props.src)}
+	onClick={() => this.handleClick(this.props.src, this.props.id)}
         style={thumbStyle}
         className="img-thumbnail"
         height="80"
         width="80"
         src={this.props.src}
 	alt="solar"
-	    key={this.props.src}
+	    key={this.props.id}
+	    id={this.props.id}
       />
     );
   }
