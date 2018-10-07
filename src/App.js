@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
+import ImageData from './ImageData.json';
 
 class App extends Component {
 	constructor() {
@@ -39,28 +40,7 @@ class MicroDB {
 	}
 
 	getData() {
-	      var id = 1;
-	      var src = './img/1.jpg';
-	      var parent_id = 0;
-	      var pic = [id, src, parent_id];
-		var pics = [];
-	      pics.push(pic);
-	      id = 2;
-	      src = './img/1_1.jpg'
-	      parent_id = 1;
-	      pic = [id, src, parent_id]
-	      pics.push(pic);
-	      id = 3;
-	      src = './img/1_2.jpg'
-	      parent_id = 1;
-	      pic = [id, src, parent_id]
-	      pics.push(pic);
-	      id = 4;
-	      src = './img/1_3.jpg'
-	      parent_id = 1;
-	      pic = [id, src, parent_id]
-	      pics.push(pic);
-		 this.pics = pics;
+		this.pics = ImageData;
 		return this.pics;
 	}
 
@@ -75,25 +55,10 @@ class MicroDB {
 			var index = condVal - 1; // id is ALWAYS index+1
 			var thispic = this.pics[index]
 		}
-		// only working for id now - needs more work
-		// there are only three choices and only ever will be - nothing fancy here
 		if (selection === 'src') {
 			return (thispic);
 		}
 	}
-/*
-	getFamily(id) {
-		if (this.pics[id][2] === 0) { // if they are a parent, get their children
-	 		var childArr = this.getChildren(id);
-		}
-		else { // they are a child, so get their parent
-			// I really just need to send the whole subarray up here
-			// then I just get the parent like this
-			var parent = this.picshh
-		}
-		return childArr;
-	}
-	*/
 
 	getFamily(id) {
 		var famArr = [];
@@ -101,37 +66,23 @@ class MicroDB {
 		var len = this.pics.length;
 		// first go up the pic array looking for relatives
 		while (i < len) {
-			if (this.pics[i][2] !== id && this.pics[i][2] !== 0) { // neither child nor sibling
-				break;
+			if ((this.pics[i-1][2] === this.pics[i][2]) || (this.pics[i][2] === this.pics[i-1][0])) { // either sibling or child
+				famArr.push(this.pics[i])
+				i++
 			}
-			famArr.push(this.pics[i])
-			i++
+			else { break; }
 		}
 		// now go down the pic array looking for relatives
-		var j = id - 1;
-		while (j > 0) {
-			if (this.pics[i][2] !== id && this.pics[i][2] !== 0) { // neither child nor sibling
-				break;
+		var j = id - 2;
+		while (j >= 0) {
+			if ((this.pics[j][2] === this.pics[j+1][2]) || (this.pics[j][0] === this.pics[id-1][2])) { // either sibling or child
+				famArr.unshift(this.pics[j]) // keep array sorted
+				j--
 			}
-			famArr.push(this.pics[i])
-			j--
+			else { break; }
 		}
 		return famArr;
 	}
-
-	/*
-	getChildren(id) {
-		var childArr = [];
-		var i = id;
-		var len = this.pics.length;
-		while (i < len) {
-			if (this.pics[i][2] !== id) { break; }
-			childArr.push([this.pics[i][0], this.pics[i][1]]);
-			i++
-		}
-		return childArr;
-	}
-		*/	
 }
 
 class Head extends Component {
@@ -196,9 +147,6 @@ class JumboTron extends Component {
 class Carousel extends Component {
 	constructor(props) {
 		super(props);
-	 // 	var db = new MicroDB();
-	  //	var mainpic = db.select('src', 'id=1')
-//		mainpic = this.mainpic ? 
 		var mainpic =  this.mainpic ? this.mainpic : this.props.pics[0] 
 		this.state = {
 			mainpic :  mainpic 
@@ -206,8 +154,6 @@ class Carousel extends Component {
 	}
   render() {
 	  var mainpic = this.state.mainpic;
-	//  var db = new MicroDB();
-	 // var mainpic = db.select('src', 'id=1')
     return (
       <div className="album py-5 bg-light">
         <div className="container">
@@ -275,23 +221,15 @@ class Pictures extends Component {
       justifyContent: "space-around",
       alignItems: "flex-end"
     };
-	  // I left off here.  I think I need to know from carousel whether
-	  // a parent or child is in the main picture
    if (this.props.mainpic) {
 	   var mainpicID = this.props.mainpic[0];
-	   // ImageSources = "SELECT src FROM pics WHERE sameFamily(mainpicID_"
-	  var db = new MicroDB();
-	   // really need to figure out why this is called more than once at this point
+	  var db = new MicroDB(); // it is not really a database
 	  var famArr = db.getFamily(mainpicID);
-	   
-		   //   <ChildPic src={memberArr[1]} key={memberArr[0]} id={memberArr[0]} mainsrc={this.props.mainpicArr[1]} mainid={this.props.mainpicArr[0]} changeMain={ (mainpic) => this.setState({mainpic})} />
-
       var ImageSources = famArr.map(memberArr => {
 	      return (
 		      <ChildPic src={memberArr[1]} key={memberArr[0]} id={memberArr[0]} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
 	      );
         });
-
    }
     return (<div style={subImageStyle}>{ImageSources}</div>);
   }
@@ -326,13 +264,9 @@ class ChildPic extends Component {
 		this.props.changeMain([id, src]) // this is sending info back to parent/grandparent 
 
 	var text;
-//	document.getElementById('firstslide').src = this.src; 
-//	document.getElementById(this.id).src =  this.mainsrc; 
-		// console.log(this.src)
 		var temp = this.mainsrc;
 		this.mainsrc = this.src;
 		this.src = temp;
-		// console.log(this.src)
 
 	if ( this.props.src === "./img/1_1.jpg" ) {
 		text = "This gives you a good look at how we mount on an existing torchdown roof.  The grey dams surround the mounts and a liquid sealant is poured in.  It hardens to provide an inpenetrable seal.";
@@ -353,8 +287,6 @@ class ChildPic extends Component {
     var thumbStyle = {
       opacity: this.state.opacity
     };
-	  // so it's getting close...handleClick makes the thumbs disappear, but I don't think
-	  // it'll be hard to fix
     return (
       <img
         onMouseOut={() => this.mouseOut(this.src)}
