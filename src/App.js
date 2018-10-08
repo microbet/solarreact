@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import './App.css';
 import ImageData from './ImageData.json';
+import Head from './Components/Head';
+import JumboTron from './Components/JumboTron';
+import Admin from './Components/Admin';
 
 class App extends Component {
 	constructor() {
@@ -19,12 +22,21 @@ class App extends Component {
 	    <Head />
 	    <JumboTron />
 	    <Carousel pics={this.state.pics} />
+	    <Admin />
       </div>
 	 );
   }
 }
 
 export default App;
+
+// working on Auth0
+// https://medium.appbase.io/how-to-implement-authentication-for-your-react-app-cf09eef3bb0b
+// https://medium.appbase.io/securing-a-react-web-app-with-server-side-authentication-1b7c7dc55c16
+// domain = newenergy.auth0.com Client ID = sGfCvajG_5moTi6sntLfW8_C8ujWZPC8
+// need to understand each piece - working on History before just importing
+// https://www.youtube.com/watch?v=7nafaH9SddU
+// their history function
 
 class MicroDB {
 	// this is a microscopic database acting on pics array
@@ -82,65 +94,6 @@ class MicroDB {
 			else { break; }
 		}
 		return famArr;
-	}
-}
-
-class Head extends Component {
-
-	render() {
-			  return(
-						 <div>
-
-						   <div className="collapse bg-dark" id="navbarHeader">
-        <div className="container">
-          <div className="row">
-            <div className="col-sm-8 col-md-7 py-4">
-              <h4 className="text-white">About</h4>
-              <p className="text-muted">Jay Hirsch General and Electrical has been designing and installing photovoltaic systems since 2008. Committment to our clients for the long term is our number one specialty.  Not far behind that it flexibility.  We can do anything from just design, to helping homeowners, to turnkey installations of small or large systems.  We work with string and microinverters, grid-tied, hybrid and off grid systems.  We have a general contractor's license as well as electrical and can do any work on roofing or electrical service upgrades that may be needed along with solar installation.  We work for homeowners and corporations as prime or sub-contractors.</p>
-            </div>
-            <div className="col-sm-4 offset-md-1 py-4">
-              <h4 className="text-white">Contact</h4>
-              <ul className="list-unstyled">
-                <li><a href="" className="text-white">Follow on Twitter</a></li>
-                <li><a href="" className="text-white">Like on Facebook</a></li>
-                <li><a href="" className="text-white">Email me</a></li>
-              </ul>
-            </div>
-          </div>
-        </div>
-      </div>
-      <div className="navbar navbar-dark bg-dark shadow-sm">
-        <div className="container d-flex justify-content-between">
-          <a href="" className="navbar-brand d-flex align-items-center">
-	    <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><rect x="2" y="6" width="20" height="15"></rect><rect x="5" y="10" width="4" height="9" strokeWidth="1"></rect><rect x="13" y="10" width="5" height="4" strokeWidth="1"></rect><line x1="0" y1="7" x2="12" y2="1"></line><line x1="12" y1="1" x2="24" y2="7"></line></svg>
-            <strong>Home</strong>
-          </a>
-          <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarHeader" aria-controls="navbarHeader" aria-expanded="false" aria-label="Toggle navigation">
-            <span className="navbar-toggler-icon"></span>
-          </button>
-        </div>
-      </div>
-						 </div>
-			  );
-	}
-}
-
-class JumboTron extends Component {
-	render() {
-		return(
-			
-      <section className="jumbotron text-center">
-        <div className="container">
-          <h1 className="jumbotron-heading">Album example</h1>
-          <p className="lead text-muted">C:\Users\UserName\AppData\Local\GitHubDesktop\app-1.0.5\resources\app\git\cmd\ </p>
-          <p>
-            <a href="" className="btn btn-primary my-2">Main call to action</a>
-            <a href="" className="btn btn-secondary my-2">Secondary action</a>
-          </p>
-        </div>
-      </section>
-
-		);
 	}
 }
 
