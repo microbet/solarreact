@@ -22,6 +22,7 @@ class App extends Component {
 	    <Head />
 	    <JumboTron />
 	    <Carousel pics={this.state.pics} />
+	    <br />
 	    <Admin />
       </div>
 	 );
