@@ -75,9 +75,15 @@ class Admin extends Component {
 export default Admin
 
 class FileLS extends Component {
+	constructor() {
+		super();
+		this.state = {
+			filelist: []
+		}
+	}
 	
 	processResponse(res) {
-	//	console.log('up here' + res);
+		this.setState( { filelist: res.data.filelist } )
 	}
 	
 	componentDidMount() {
@@ -86,16 +92,23 @@ class FileLS extends Component {
 				console.log(res);
 				this.processResponse(res);
 			})
-		//	console.log('now ');
 	}
 	
 	render() {
-		console.log('buh');
+		var imgsrc_arr = [];
+		this.state.filelist.forEach((element) => {
+			imgsrc_arr.push('./img/' + element);
+		});
+		var img_arr = imgsrc_arr.map((thisimg) => {
+			return <img height="80" width="80" alt="thumbnail house" className="img-thumbnail" src={thisimg} />
+		});
 		return(
 			<div>
-			Here is where the files go, why no log
+			{img_arr}
 			</div>
 		);
 	}
 }
+
+
 
