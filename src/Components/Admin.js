@@ -5,7 +5,8 @@ class Admin extends Component {
 	constructor() {
 		super();
 		this.state = {
-			admin: ""
+	//		admin: ""   // commented out for testing, comment out next line instead in prod
+			admin: "verified"
 		}
 	}
 
@@ -78,37 +79,89 @@ class FileLS extends Component {
 	constructor() {
 		super();
 		this.state = {
-			filelist: []
+			filelist: [],
+			selected: '',
+			displaced: '',
+			message: ''
 		}
 	}
 	
 	processResponse(res) {
 		this.setState( { filelist: res.data.filelist } )
 	}
-	
+
 	componentDidMount() {
 		axios.post('http://localhost:5000/api/imagesearch') 
 		.then(res => {
-				console.log(res);
 				this.processResponse(res);
 			})
 	}
+
+	allowDrop(event) {  // drop is allowed here
+		event.preventDefault();
+	}
+
+	drag(event) { // you are dragging image
+		this.setState({ selected: event.target.src });
+	}
+
+	getPath(url) {
+		var splitup = url.split('/');
+		var src = splitup[splitup.length-1];
+		var srcArr = src.split('#');
+		src = srcArr[0];
+		return src
+	}
+
+	// something goes wrong when you drop an image on itself
+
+	drop(event) {  // dropped
+		// need to send a call to the server that this.state.selected and target.id
+		// need to change names 
+		var displacedPath = this.getPath(event.target.src);
+		var selectedPath = this.getPath(this.state.selected);
+		const data = {
+			selected: selectedPath,
+			displaced: displacedPath
+		}
+		if (selectedPath == displacedPath) return;
+		axios.post('http://localhost:5000/api/imgswap', data)
+			.then(res => {
+				var response = res.data;
+			})
+		window.location.reload(); // ok, I tried a lot of ways not to do this
+	}                                 // but this is just for admin
 	
-	render() {
+	getImgSrcArr() {
 		var imgsrc_arr = [];
 		this.state.filelist.forEach((element) => {
-			imgsrc_arr.push('./img/' + element);
+			imgsrc_arr.push(['./img/' + element, element]);
 		});
-		var img_arr = imgsrc_arr.map((thisimg) => {
-			return <img height="80" width="80" alt="thumbnail house" className="img-thumbnail" src={thisimg} />
+		imgsrc_arr.sort(); // prob not necessary, but not counting on file system sort
+		var img_arr = imgsrc_arr.map((thisimg, index) => {
+			var thissrc = thisimg[0] + '#' + Date.now();
+			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} />{thisimg[1]}</div>
 		});
+		return img_arr
+	}
+
+	render() {
+		var img_arr = this.getImgSrcArr();
+		var fileStyle = {
+			display: 'flex',
+			justifyContent: 'center'
+		}
+
 		return(
 			<div>
+			login disabled for testing - fix it in admin page also get rid of this note and the outer div
+			<div style={fileStyle}>
 			{img_arr}
+			{this.state.message}
+			</div>
 			</div>
 		);
 	}
 }
-
 
 

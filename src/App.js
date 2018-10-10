@@ -38,6 +38,25 @@ export default App;
 // need to understand each piece - working on History before just importing
 // https://www.youtube.com/watch?v=7nafaH9SddU
 // their history function
+//
+// snippet below from link is very cool.  I can use this to change what is in
+// the main container(?) to different components other than the carousel
+//https://reactjs.org/docs/jsx-in-depth.html
+/*
+import React from 'react';
+import { PhotoStory, VideoStory } from './stories';
+
+const components = {
+  photo: PhotoStory,
+  video: VideoStory
+};
+
+function Story(props) {
+  // Correct! JSX type can be a capitalized variable.
+  const SpecificStory = components[props.storyType];
+  return <SpecificStory story={props.story} />;
+}
+*/
 
 class MicroDB {
 	// this is a microscopic database acting on pics array
