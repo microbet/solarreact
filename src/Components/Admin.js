@@ -75,10 +75,25 @@ class Admin extends Component {
 export default Admin
 
 class FileLS extends Component {
+	
+	processResponse(res) {
+	//	console.log('up here' + res);
+	}
+	
+	componentDidMount() {
+		axios.post('http://localhost:5000/api/imagesearch') 
+		.then(res => {
+				console.log(res);
+				this.processResponse(res);
+			})
+		//	console.log('now ');
+	}
+	
 	render() {
+		console.log('buh');
 		return(
 			<div>
-			Here is where the files go
+			Here is where the files go, why no log
 			</div>
 		);
 	}
