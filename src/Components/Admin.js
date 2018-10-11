@@ -6,7 +6,8 @@ class Admin extends Component {
 		super();
 		this.state = {
 	//		admin: ""   // commented out for testing, comment out next line instead in prod
-			admin: "verified"
+			admin: "verified",
+			isHidden: false
 		}
 	}
 
@@ -29,7 +30,6 @@ class Admin extends Component {
 		event.preventDefault();
 	}
 
-
 	processResponse(response) {
 		if (response.message === 'approved') {
 			this.setState( { admin: "verified" } );
@@ -38,17 +38,47 @@ class Admin extends Component {
 			this.setState( { admin: "dunno" } );
 		}
 	}
+ 
+	uploadClick() {
+//		const components = [
+	//		FileLS,
+		//	UploadPics
+//		];
+	//	this.setState( { whichComp : 'UploadPics' } )
+		this.setState( { 
+			isHidden: true,
+			});
+		
+	}
 
+//function Story(props) {
+  // Correct! JSX type can be a capitalized variable.
+//  const SpecificStory = components[props.storyType];
+//  return <SpecificStory story={props.story} />;
+//}
+//	}
+	
 	render() {
 		// let's say you're not logged in as admin
 		if (this.state.admin === "verified") {
 			// show them the login form
 			// it should really be a link/button to the login form
+	//		if (this.state.whichComp === "FileLS") {
+		//		var adminComp = "<FileLS admin={this.state.admin}/> ";
+	//		} else {
+	//			var adminComp =	"<UploadPics admin={this.state.admin}>"; 
+	//	
+	//	}
+//			const adminComp = "hi";
 			return(
 				  <div>
-				  <FileLS />
+				  {!this.state.isHidden && <FileLS admin={this.state.admin} /> }
+				  <UploadPics admin={this.state.admin} />
+				  <button className="mediumButton" onClick={() => this.uploadClick()}>
+				  <p className="mediumText">Upload Pics?</p>
+				  </button>
 				  </div>
-			  );
+			);
 		} else if (this.state.admin === "letussee") {
 				return(
 					<div className="small">
@@ -124,7 +154,7 @@ class FileLS extends Component {
 			selected: selectedPath,
 			displaced: displacedPath
 		}
-		if (selectedPath == displacedPath) return;
+		if (selectedPath === displacedPath) return;
 		axios.post('http://localhost:5000/api/imgswap', data)
 			.then(res => {
 				var response = res.data;
@@ -164,4 +194,12 @@ class FileLS extends Component {
 	}
 }
 
+class UploadPics extends Component {
+	render() {
+		return(
+			<div>this is where you're going to upload pictures</div>
+		);
+	}
+	
+}
 

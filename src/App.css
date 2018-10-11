@@ -96,6 +96,20 @@ footer p {
 	color: rgba(170, 170, 170, 0.5);
 }
 
+.mediumButton {
+	background-color: rgba(255, 255, 255, 0.5);
+	border: none;
+	height: 25px;
+	width: 120px;
+	color: rgba(30, 30, 30, 0.5);
+}
+
+.mediumText {
+	font-size: 1.1em;
+	color: rgba(30, 30, 30, 0.5);
+	padding: 2px;
+}
+
 .smallText {
 	font-size: 0.7em;
 	color: rgba(170, 170, 170, 0.5);
