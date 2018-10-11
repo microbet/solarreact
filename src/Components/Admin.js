@@ -7,7 +7,8 @@ class Admin extends Component {
 		this.state = {
 	//		admin: ""   // commented out for testing, comment out next line instead in prod
 			admin: "verified",
-			isHidden: false
+			fileLsHidden: false,
+			upLoadHidden: true 
 		}
 	}
 
@@ -45,10 +46,17 @@ class Admin extends Component {
 		//	UploadPics
 //		];
 	//	this.setState( { whichComp : 'UploadPics' } )
-		this.setState( { 
-			isHidden: true,
+		if (this.state.fileLsHidden) {
+			this.setState( { 
+				fileLsHidden: false,
+				upLoadHidden: true
 			});
-		
+		} else {
+			this.setState( { 
+				fileLsHidden: true,
+				upLoadHidden: false 
+			});
+		}
 	}
 
 //function Story(props) {
@@ -72,8 +80,8 @@ class Admin extends Component {
 //			const adminComp = "hi";
 			return(
 				  <div>
-				  {!this.state.isHidden && <FileLS admin={this.state.admin} /> }
-				  <UploadPics admin={this.state.admin} />
+				  {!this.state.fileLsHidden && <FileLS admin={this.state.admin} /> }
+				  {!this.state.upLoadHidden && <UploadPics admin={this.state.admin} /> }
 				  <button className="mediumButton" onClick={() => this.uploadClick()}>
 				  <p className="mediumText">Upload Pics?</p>
 				  </button>
@@ -194,10 +202,14 @@ class FileLS extends Component {
 	}
 }
 
-class UploadPics extends Component {
+class UploadPics extends Component { // left off here.  Form not working yet.
 	render() {
 		return(
-			<div>this is where you're going to upload pictures</div>
+			  <form onSubmit={this.handleUpload}>
+			  <input type="file" />
+			  <button>Upload</button>
+			  </form>
+
 		);
 	}
 	
