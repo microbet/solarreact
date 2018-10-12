@@ -38,25 +38,6 @@ export default App;
 // need to understand each piece - working on History before just importing
 // https://www.youtube.com/watch?v=7nafaH9SddU
 // their history function
-//
-// snippet below from link is very cool.  I can use this to change what is in
-// the main container(?) to different components other than the carousel
-//https://reactjs.org/docs/jsx-in-depth.html
-/*
-import React from 'react';
-import { PhotoStory, VideoStory } from './stories';
-
-const components = {
-  photo: PhotoStory,
-  video: VideoStory
-};
-
-function Story(props) {
-  // Correct! JSX type can be a capitalized variable.
-  const SpecificStory = components[props.storyType];
-  return <SpecificStory story={props.story} />;
-}
-*/
 
 class MicroDB {
 	// this is a microscopic database acting on pics array
@@ -150,8 +131,7 @@ class Carousel extends Component {
                     styles="background-color: rgba(200, 200, 200, 0.5);"
                     id="firstslidecaption"
                   >
-                    Here is placeholder caption. I hope I don't leave this on
-                    the site. :)
+	    		{this.props.pics[0][3]}
                   </p>
                   <div>
                     <Pictures mainpic={mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
@@ -200,7 +180,7 @@ class Pictures extends Component {
 	  var famArr = db.getFamily(mainpicID);
       var ImageSources = famArr.map(memberArr => {
 	      return (
-		      <ChildPic src={memberArr[1]} key={memberArr[0]} id={memberArr[0]} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
+		      <ChildPic caption={memberArr[3]} src={memberArr[1]} key={memberArr[0]} id={memberArr[0]} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
 	      );
         });
    }
@@ -241,19 +221,7 @@ class ChildPic extends Component {
 		this.mainsrc = this.src;
 		this.src = temp;
 
-	if ( this.props.src === "./img/1_1.jpg" ) {
-		text = "This gives you a good look at how we mount on an existing torchdown roof.  The grey dams surround the mounts and a liquid sealant is poured in.  It hardens to provide an inpenetrable seal.";
-	}
-	if ( this.props.src === "./img/1.jpg" ) {
-		text = "This array is tilted slightly to get more production on a nearly flat roof.";
-	}
-	if ( this.props.src === "./img/1_2.jpg" ) {
-		text = "The disconnect and main service panel.";
-	}
-	if ( this.props.src === "./img/1_3.jpg" ) {
-		text = "They have a flush mounted portion on a pitched roof.  This is a pretty large system.";
-	}
-	document.getElementById('firstslidecaption').innerHTML = text;
+	document.getElementById('firstslidecaption').innerHTML = this.props.caption;
 }
 
   render() {

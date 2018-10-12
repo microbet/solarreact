@@ -8,6 +8,7 @@ class Admin extends Component {
 	//		admin: ""   // commented out for testing, comment out next line instead in prod
 			admin: "verified",
 			fileLsHidden: false,
+			captionHidden: true,
 			upLoadHidden: true 
 		}
 	}
@@ -41,11 +42,6 @@ class Admin extends Component {
 	}
  
 	uploadClick() {
-//		const components = [
-	//		FileLS,
-		//	UploadPics
-//		];
-	//	this.setState( { whichComp : 'UploadPics' } )
 		if (this.state.fileLsHidden) {
 			this.setState( { 
 				fileLsHidden: false,
@@ -59,29 +55,22 @@ class Admin extends Component {
 		}
 	}
 
-//function Story(props) {
-  // Correct! JSX type can be a capitalized variable.
-//  const SpecificStory = components[props.storyType];
-//  return <SpecificStory story={props.story} />;
-//}
-//	}
-	
 	render() {
 		// let's say you're not logged in as admin
 		if (this.state.admin === "verified") {
 			// show them the login form
 			// it should really be a link/button to the login form
-	//		if (this.state.whichComp === "FileLS") {
-		//		var adminComp = "<FileLS admin={this.state.admin}/> ";
-	//		} else {
-	//			var adminComp =	"<UploadPics admin={this.state.admin}>"; 
-	//	
-	//	}
-//			const adminComp = "hi";
 			return(
 				  <div>
-				  {!this.state.fileLsHidden && <FileLS admin={this.state.admin} /> }
+				  {!this.state.fileLsHidden && <FileLS admin={this.state.admin} changeHiddens={ () => this.setState( { 
+						  upLoadHidden: true,
+					 	 fileLsHIdden: true,
+					 	 captionHidden: false
+				  	})
+				  } />
+				}
 				  {!this.state.upLoadHidden && <UploadPics admin={this.state.admin} /> }
+					{!this.state.captionHidden && <EditCaptions admin={this.state.admin} /> }
 				  <button className="mediumButton" onClick={() => this.uploadClick()}>
 				  <p className="mediumText">Upload Pics?</p>
 				  </button>
@@ -151,6 +140,10 @@ class FileLS extends Component {
 		return src
 	}
 
+	changeHiddens() {
+					console.log('did I get here');
+	}// this triggers display the right component for editing captions and hide others
+
 	// something goes wrong when you drop an image on itself
 
 	drop(event) {  // dropped
@@ -164,9 +157,6 @@ class FileLS extends Component {
 		}
 		if (selectedPath === displacedPath) return;
 		axios.post('http://localhost:5000/api/imgswap', data)
-			.then(res => {
-				var response = res.data;
-			})
 		window.location.reload(); // ok, I tried a lot of ways not to do this
 	}                                 // but this is just for admin
 	
@@ -178,22 +168,17 @@ class FileLS extends Component {
 		imgsrc_arr.sort(); // prob not necessary, but not counting on file system sort
 		var img_arr = imgsrc_arr.map((thisimg, index) => {
 			var thissrc = thisimg[0] + '#' + Date.now();
-			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} />{thisimg[1]}</div>
+			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption')}>Edit Caption</button></div></div>
 		});
 		return img_arr
 	}
 
 	render() {
 		var img_arr = this.getImgSrcArr();
-		var fileStyle = {
-			display: 'flex',
-			justifyContent: 'center'
-		}
 
 		return(
 			<div>
-			login disabled for testing - fix it in admin page also get rid of this note and the outer div
-			<div style={fileStyle}>
+			<div className="adminstyle">
 			{img_arr}
 			{this.state.message}
 			</div>
@@ -203,15 +188,40 @@ class FileLS extends Component {
 }
 
 class UploadPics extends Component { // left off here.  Form not working yet.
+
+	constructor() {
+		super();
+		this.state = {
+			selectedFile: null
+		}
+	}
+
+	handleUpload = () => {
+		const fd = new FormData();
+		fd.append('image', this.state.selectedFile, this.state.selectedFile.name);
+			axios.post('http://localhost:5000/api/imgupload', fd)
+			.then((res) => {
+				// console.log(res);
+			});
+	}
+
+	handleChange = event => {
+		this.setState( { selectedFile: event.target.files[0] } );
+	}
 	render() {
 		return(
-			  <form onSubmit={this.handleUpload}>
-			  <input type="file" />
-			  <button>Upload</button>
-			  </form>
-
+			<div className="adminstyle">
+			   <input type="file" onChange={this.handleChange}/>
+			<button onClick={this.handleUpload}>Upload</button>
+			</div>
 		);
 	}
-	
 }
 
+class EditCaptions extends Component {
+				render() {
+								return(
+								<div>hi</div>
+								);
+				}
+}
