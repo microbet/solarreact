@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import axios from 'axios';
+import ImageData from '../ImageData.json';
 
 class Admin extends Component {
 	constructor() {
@@ -102,6 +103,65 @@ class Admin extends Component {
 
 export default Admin
 
+class MicroDB {  // I tried various ways to not duplicated this and failed
+	// this is a microscopic database acting on pics array
+	// it's a little like a relational database, but not really
+	// the data is and must be very structured  id's go in order only
+	// children always immediately follow their parent
+	constructor(id, src, parent_id) {
+		this.id = 1;
+		this.src = src;
+		this.parent_id = parent_id;
+		this.pic = [];
+		this.getData();
+	}
+
+	getData() {
+		this.pics = ImageData;
+		return this.pics;
+	}
+
+	select(selection, condition) {
+		// condition is of form x=y
+		// I think I should probably return src and id everytime
+		var condArr = condition.split('=');
+		var condName = condArr[0];
+		var condVal = condArr[1];
+		if (condName === 'id') {  // this case is easy, id being ordered is enforced
+			condVal = parseInt(condVal, 10); // it will be an int, but typing is the rage 
+			var index = condVal - 1; // id is ALWAYS index+1
+			var thispic = this.pics[index]
+		}
+		if (selection === 'src') {
+			return (thispic);
+		}
+	}
+
+	getFamily(id) {
+		var famArr = [];
+		var i = id;
+		var len = this.pics.length;
+		// first go up the pic array looking for relatives
+		while (i < len) {
+			if ((this.pics[i-1][2] === this.pics[i][2]) || (this.pics[i][2] === this.pics[i-1][0])) { // either sibling or child
+				famArr.push(this.pics[i])
+				i++
+			}
+			else { break; }
+		}
+		// now go down the pic array looking for relatives
+		var j = id - 2;
+		while (j >= 0) {
+			if ((this.pics[j][2] === this.pics[j+1][2]) || (this.pics[j][0] === this.pics[id-1][2])) { // either sibling or child
+				famArr.unshift(this.pics[j]) // keep array sorted
+				j--
+			}
+			else { break; }
+		}
+		return famArr;
+	}
+}
+
 class FileLS extends Component {
 	constructor() {
 		super();
@@ -152,12 +212,38 @@ class FileLS extends Component {
 		var displacedPath = this.getPath(event.target.src);
 		var selectedPath = this.getPath(this.state.selected);
 		const data = {
-			selected: selectedPath,
-			displaced: displacedPath
+			selected: selectedPath, // file name of dragged img
+			displaced: displacedPath // file name it's dropped on
 		}
 		if (selectedPath === displacedPath) return;
-		axios.post('http://localhost:5000/api/imgswap', data)
-		window.location.reload(); // ok, I tried a lot of ways not to do this
+		axios.post('http://localhost:5000/api/imgswap', data)  // swap pics in filesystem
+		// I need to read the json file to switch in there
+		var db = new MicroDB();
+		var picsArr = db.getData();
+		console.log(picsArr);
+	//	console.log(data.selected);
+	//	console.log(data.displaced);
+		console.log(event.target.src); // one it's dropped on
+		console.log(this.state.selected);  // one that's dragged
+		var selectedExtended = "./img/" + data.selected;
+		var displacedExtended = "./img/" + data.displaced;
+		var captionArr = [];
+		var firstindex = -2;
+		var firstcaption = '';
+		var secondindex = -2;
+		var secondcaption = '';
+		for (let i=0; i<picsArr.length; i++) {
+			if (picsArr[i][1] === selectedExtended || picsArr[i][1] === displacedExtended) {
+				if (firstindex > -2) { firstindex = i; }
+				if (!firstcaption) { firstcaption = picsArr[i][3]; }
+				if (firstindex > -1) { secondindex = i; }
+				if (firstcaption) { secondcaption = picsArr[i][3]; }
+			}
+		}
+		picsArr[firstindex][3] = secondcaption;
+		picsArr[secondindex][3] = firstcaption;
+		// now I have to save this to the json file
+	//	window.location.reload(); // ok, I tried a lot of ways not to do this
 	}                                 // but this is just for admin
 	
 	getImgSrcArr() {
@@ -167,7 +253,8 @@ class FileLS extends Component {
 		});
 		imgsrc_arr.sort(); // prob not necessary, but not counting on file system sort
 		var img_arr = imgsrc_arr.map((thisimg, index) => {
-			var thissrc = thisimg[0] + '#' + Date.now();
+		//	var thissrc = thisimg[0] + '#' + Date.now();
+			var thissrc = thisimg[0];
 			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption')}>Edit Caption</button></div></div>
 		});
 		return img_arr

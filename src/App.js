@@ -216,7 +216,7 @@ class ChildPic extends Component {
 	handleClick(src, id, mainsrc, mainid) {
 		this.props.changeMain([id, src]) // this is sending info back to parent/grandparent 
 
-	var text;
+	//var text;
 		var temp = this.mainsrc;
 		this.mainsrc = this.src;
 		this.src = temp;
