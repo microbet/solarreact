@@ -213,37 +213,43 @@ class FileLS extends Component {
 		var selectedPath = this.getPath(this.state.selected);
 		const data = {
 			selected: selectedPath, // file name of dragged img
-			displaced: displacedPath // file name it's dropped on
+			displaced: displacedPath, // file name it's dropped on
+			jsondata: ''
 		}
-		if (selectedPath === displacedPath) return;
-		axios.post('http://localhost:5000/api/imgswap', data)  // swap pics in filesystem
-		// I need to read the json file to switch in there
+		if (selectedPath === displacedPath) return; //dropped on itself
+			// I need to read the json file to switch in there
 		var db = new MicroDB();
 		var picsArr = db.getData();
-		console.log(picsArr);
-	//	console.log(data.selected);
-	//	console.log(data.displaced);
-		console.log(event.target.src); // one it's dropped on
-		console.log(this.state.selected);  // one that's dragged
 		var selectedExtended = "./img/" + data.selected;
 		var displacedExtended = "./img/" + data.displaced;
-		var captionArr = [];
-		var firstindex = -2;
+		var firstindex = -1;
 		var firstcaption = '';
-		var secondindex = -2;
+		var secondindex = -1;
 		var secondcaption = '';
 		for (let i=0; i<picsArr.length; i++) {
 			if (picsArr[i][1] === selectedExtended || picsArr[i][1] === displacedExtended) {
-				if (firstindex > -2) { firstindex = i; }
-				if (!firstcaption) { firstcaption = picsArr[i][3]; }
-				if (firstindex > -1) { secondindex = i; }
-				if (firstcaption) { secondcaption = picsArr[i][3]; }
+				if (firstindex === -1) {
+					firstindex = i;
+					firstcaption = picsArr[i][3];
+					continue;
+				}
+				if (secondindex === -1) {
+					secondindex = i;
+					secondcaption = picsArr[i][3];
+					continue;
+				}
 			}
 		}
 		picsArr[firstindex][3] = secondcaption;
 		picsArr[secondindex][3] = firstcaption;
+		data.jsondata = picsArr;
 		// now I have to save this to the json file
-	//	window.location.reload(); // ok, I tried a lot of ways not to do this
+		axios.post('http://localhost:5000/api/imgswap', data)  // swap pics in filesystem and rewrite json file
+		.then((res) => {
+			console.log(res);
+		});
+
+		// window.location.reload(); // ok, I tried a lot of ways not to do this
 	}                                 // but this is just for admin
 	
 	getImgSrcArr() {
@@ -290,6 +296,22 @@ class UploadPics extends Component { // left off here.  Form not working yet.
 			.then((res) => {
 				// console.log(res);
 			});
+		// ok, uploading isn't letting you pick if it's another project or another
+		// picture for the same project
+		// I forget where it renames the file
+		// I need to update the json when I upload a picture
+		/*
+		// need to update the ImageData file too
+		// for now I'm doing this in a separate call because uploading the image
+		// was a pain and I don't want to interfere with it
+		var db = new MicroDB();
+		var picsArr = db.getData();
+		picsArr.push([picsArr.length], "./img/
+		axios.post('http://localhost:5000/api/updateJson', data)  // swap pics in filesystem and rewrite json file
+		.then((res) => {
+			console.log(res);
+		});
+		*/
 	}
 
 	handleChange = event => {
