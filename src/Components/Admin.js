@@ -6,11 +6,12 @@ class Admin extends Component {
 	constructor() {
 		super();
 		this.state = {
-	//		admin: ""   // commented out for testing, comment out next line instead in prod
+	//		admin: "",   // commented out for testing, comment out next line instead in prod
 			admin: "verified",
 			fileLsHidden: false,
 			captionHidden: true,
-			upLoadHidden: true 
+			upLoadHidden: true, 
+			picCategory: ''
 		}
 	}
 
@@ -42,26 +43,25 @@ class Admin extends Component {
 		}
 	}
  
-	uploadClick() {
+	addpicClick(picCategory) {
+		console.log(picCategory);
 		if (this.state.fileLsHidden) {
 			this.setState( { 
 				fileLsHidden: false,
-				upLoadHidden: true
+				upLoadHidden: true,
 			});
 		} else {
 			this.setState( { 
 				fileLsHidden: true,
-				upLoadHidden: false 
+				upLoadHidden: false, 
+				picCategory: picCategory
 			});
 		}
 	}
 
 	render() {
-		// let's say you're not logged in as admin
-		if (this.state.admin === "verified") {
-			// show them the login form
-			// it should really be a link/button to the login form
-			return(
+		if (this.state.admin === "verified") { // logged in as admin
+			return( // show them the login form
 				  <div>
 				  {!this.state.fileLsHidden && <FileLS admin={this.state.admin} changeHiddens={ () => this.setState( { 
 						  upLoadHidden: true,
@@ -70,10 +70,10 @@ class Admin extends Component {
 				  	})
 				  } />
 				}
-				  {!this.state.upLoadHidden && <UploadPics admin={this.state.admin} /> }
+				  {!this.state.upLoadHidden && <UploadPics admin={this.state.admin} picCategory={this.state.picCategory} /> }
 					{!this.state.captionHidden && <EditCaptions admin={this.state.admin} /> }
-				  <button className="mediumButton" onClick={() => this.uploadClick()}>
-				  <p className="mediumText">Upload Pics?</p>
+				  <button className="mediumButton" onClick={(picCategory) => this.addpicClick('newsubpic')}>
+				  <p className="mediumText">add pic for this job</p>
 				  </button>
 				  </div>
 			);
@@ -292,9 +292,10 @@ class UploadPics extends Component { // left off here.  Form not working yet.
 	handleUpload = () => {
 		const fd = new FormData();
 		fd.append('image', this.state.selectedFile, this.state.selectedFile.name);
+		fd.append('picCategory', this.props.picCategory);
 			axios.post('http://localhost:5000/api/imgupload', fd)
 			.then((res) => {
-				// console.log(res);
+				console.log(res);
 			});
 		// ok, uploading isn't letting you pick if it's another project or another
 		// picture for the same project
@@ -318,6 +319,7 @@ class UploadPics extends Component { // left off here.  Form not working yet.
 		this.setState( { selectedFile: event.target.files[0] } );
 	}
 	render() {
+		console.log(this.props.picCategory);
 		return(
 			<div className="adminstyle">
 			   <input type="file" onChange={this.handleChange}/>
