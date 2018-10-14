@@ -200,8 +200,19 @@ class FileLS extends Component {
 		return src
 	}
 
-	changeHiddens() {
-					console.log('did I get here');
+	changeHiddens(control, index) {  // changeHiddens doesn't seem like the right name anymore
+		if (control === 'deletePic') {
+			const data = {
+				imgnmb: index+1, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
+			}
+			axios.post('http://localhost:5000/api/deletepic', data)  // swap pics in filesystem and rewrite json file
+		.then((res) => {
+			console.log(res);
+		});
+		}
+			
+				console.log(control);
+					console.log(index);
 	}// this triggers display the right component for editing captions and hide others
 
 	// something goes wrong when you drop an image on itself
@@ -261,7 +272,7 @@ class FileLS extends Component {
 		var img_arr = imgsrc_arr.map((thisimg, index) => {
 		//	var thissrc = thisimg[0] + '#' + Date.now();
 			var thissrc = thisimg[0];
-			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption')}>Edit Caption</button><button className="smallButton" onClick={() => this.changeHiddens('deletePic')}>Delete Pic</button></div></div>
+			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption', index)}>Edit Caption</button><button className="smallButton" onClick={() => this.changeHiddens('deletePic', index)}>Delete Pic</button></div></div>
 		});
 		return img_arr
 	}
