@@ -65,7 +65,7 @@ class Admin extends Component {
 				  <div>
 				  {!this.state.fileLsHidden && <FileLS admin={this.state.admin} changeHiddens={ () => this.setState( { 
 						  upLoadHidden: true,
-					 	 fileLsHIdden: true,
+					 	 fileLsHidden: true,
 					 	 captionHidden: false
 				  	})
 				  } />
@@ -261,7 +261,7 @@ class FileLS extends Component {
 		var img_arr = imgsrc_arr.map((thisimg, index) => {
 		//	var thissrc = thisimg[0] + '#' + Date.now();
 			var thissrc = thisimg[0];
-			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption')}>Edit Caption</button></div></div>
+			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption')}>Edit Caption</button><button className="smallButton" onClick={() => this.changeHiddens('deletePic')}>Delete Pic</button></div></div>
 		});
 		return img_arr
 	}
