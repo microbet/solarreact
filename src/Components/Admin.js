@@ -306,6 +306,7 @@ class UploadPics extends Component { // left off here.  Form not working yet.
 		fd.append('picCategory', this.props.picCategory);
 			axios.post('http://localhost:5000/api/imgupload', fd)
 			.then((res) => {
+				console.log('back from server');
 				console.log(res);
 			});
 		// ok, uploading isn't letting you pick if it's another project or another
