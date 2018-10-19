@@ -200,10 +200,11 @@ class FileLS extends Component {
 		return src
 	}
 
-	changeHiddens(control, index) {  // changeHiddens doesn't seem like the right name anymore
+	changeHiddens(control, imgfile) {  // changeHiddens doesn't seem like the right name anymore
+		console.log(imgfile);
 		if (control === 'deletePic') {
 			const data = {
-				imgnmb: index+1, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
+				imgfile: imgfile, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
 			}
 			axios.post('http://localhost:5000/api/deletepic', data)  // swap pics in filesystem and rewrite json file
 		.then((res) => {
@@ -212,7 +213,7 @@ class FileLS extends Component {
 		}
 			
 				console.log(control);
-					console.log(index);
+					console.log(imgfile);
 	}// this triggers display the right component for editing captions and hide others
 
 	// something goes wrong when you drop an image on itself
@@ -264,15 +265,16 @@ class FileLS extends Component {
 	}                                 // but this is just for admin
 	
 	getImgSrcArr() {
-		var imgsrc_arr = [];
+		let imgsrc_arr = [];
 		this.state.filelist.forEach((element) => {
 			imgsrc_arr.push(['./img/' + element, element]);
 		});
 		imgsrc_arr.sort(); // prob not necessary, but not counting on file system sort
 		var img_arr = imgsrc_arr.map((thisimg, index) => {
 		//	var thissrc = thisimg[0] + '#' + Date.now();
-			var thissrc = thisimg[0];
-			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption', index)}>Edit Caption</button><button className="smallButton" onClick={() => this.changeHiddens('deletePic', index)}>Delete Pic</button></div></div>
+			let thissrc = thisimg[0];
+			let thisfile = thisimg[1];
+			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption', index)}>Edit Caption</button><button className="smallButton" onClick={() => this.changeHiddens('deletePic', {thisfile})}>Delete Pic</button></div></div>
 		});
 		return img_arr
 	}
