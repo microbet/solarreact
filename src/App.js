@@ -25,9 +25,6 @@ class App extends Component {
 	    <Carousel pics={this.state.pics} />
 	    <br />
 	    <Admin />
-	    <br />
-	    <br />
-		<Pdfgen />
       </div>
 	 );
   }
@@ -248,22 +245,4 @@ class ChildPic extends Component {
       />
     );
   }
-}
-
-class Pdfgen extends Component {
-	
-	handleClick() {
-		axios.post('http://localhost:5000/api/pdfgen') 
-		.then(res => {
-				console.log(res);
-			})
-	}
-	
-	render() {
-		return(
-			<button className="smallButton" onClick={() => this.handleClick()}>
-				 <p className="smallText">Download PDF</p>
-			</button>
-		);
-	}
 }
