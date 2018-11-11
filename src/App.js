@@ -4,7 +4,7 @@ import ImageData from './ImageData.json';
 import Head from './Components/Head';
 import JumboTron from './Components/JumboTron';
 import Admin from './Components/Admin';
-import axios from 'axios';
+// import axios from 'axios';
 
 class App extends Component {
 	constructor() {

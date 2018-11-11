@@ -169,7 +169,8 @@ class FileLS extends Component {
 			filelist: [],
 			selected: '',
 			displaced: '',
-			message: ''
+			message: '',
+			caption: '',
 		}
 	}
 	
@@ -199,6 +200,10 @@ class FileLS extends Component {
 		src = srcArr[0];
 		return src
 	}
+	
+	handleChange = event => {
+		this.setState( { caption: event.target.value } );
+	}
 
 	changeHiddens(control, imgfile) {  // changeHiddens doesn't seem like the right name anymore
 		console.log(imgfile);
@@ -212,10 +217,16 @@ class FileLS extends Component {
 			});
 		}
 		if (control === 'editCaption') {
-			// need to have a text box to make visible here
+			console.log("change the caption of picture with index " + imgfile + " to " + this.state.caption);
+			const data = {
+				imgfile: imgfile,
+				newCaption: this.state.caption,
+			}
+			axios.post('http://localhost:5000/api/editCaption', data) // edit the caption
+			.then((res) => {
+				console.log(res);
+			});
 		}
-		console.log(control);
-		console.log(imgfile);
 	}// this triggers display the right component for editing captions and hide others
 
 	// something goes wrong when you drop an image on itself
@@ -276,7 +287,19 @@ class FileLS extends Component {
 		//	var thissrc = thisimg[0] + '#' + Date.now();
 			let thissrc = thisimg[0];
 			let thisfile = thisimg[1];
-			return <div key={index}><img id={index} key={index} height="80" width="80" draggable="true" onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt="thumbnail house" className="img-thumbnail" src={thissrc} /><div className="smallText"><button className="smallButton" onClick={() => this.changeHiddens('editCaption', index)}>Edit Caption</button><button className="smallButton" onClick={() => this.changeHiddens('deletePic', {thisfile})}>Delete Pic</button></div>
+			return (
+				<div key={index}>
+				<img id={index} key={index} height='80' width='80' draggable='true' onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt='thumbnail house' className='img-thumbnail' src={thissrc} />
+				<div className='smallText'>
+				<button className='smallButton' onClick={() => this.changeHiddens('deletePic', {thisfile})}>Delete Pic</button></div>
+				 <form onSubmit={()=> this.changeHiddens('editCaption', index)}>
+				<label>
+				Caption: <input type='text' onChange={this.handleChange} />
+				</label>
+				<button type='submit' className='smallButton'>Edit Caption</button>
+				</form>
+				</div>				
+			);
 		});
 		return img_arr
 	}
