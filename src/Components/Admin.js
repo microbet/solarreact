@@ -128,7 +128,7 @@ class MicroDB {  // I tried various ways to not duplicated this and failed
 		var condName = condArr[0];
 		var condVal = condArr[1];
 		if (condName === 'id') {  // this case is easy, id being ordered is enforced
-			condVal = parseInt(condVal, 10); // it will be an int, but typing is the rage 
+			condVal = parseInt(condVal, 10); // it will be an int, but just making sure 
 			var index = condVal - 1; // id is ALWAYS index+1
 			var thispic = this.pics[index]
 		}
@@ -210,7 +210,39 @@ class FileLS extends Component {
 		if (control === 'deletePic') {
 			const data = {
 				imgfile: imgfile, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
+				jsondata: '', 
 			}
+			let newPicsArr = [];
+			let db = new MicroDB();
+			let picsArr = db.getData();
+			let startRenaming = false;
+			let i = 0;
+			let j = 0;
+			picsArr.forEach(function(element) {
+				console.log('at beginning of loop');
+				console.log(element);
+				if (startRenaming) {
+					element[0] = element[0] - 1;
+					if (i === 1) {
+						element[1] = './img/1.jpg';
+						element[2] = 0;
+					} else {
+						j = i - 1;
+						element[1] = './img/1_' + j + '.jpg';
+					}
+				}
+				if (element[1] !== "./img/" + imgfile.thisfile) {
+					newPicsArr.push(element);
+				} else {
+					startRenaming = true;
+				}
+				i++;
+				console.log('at end of loop');
+				console.log(element);
+			});
+			console.log("newpicsaree");
+			console.log(newPicsArr);
+			data.jsondata = newPicsArr;
 			axios.post('http://localhost:5000/api/deletepic', data)  // swap pics in filesystem and rewrite json file
 			.then((res) => {
 				console.log(res);
@@ -294,9 +326,11 @@ class FileLS extends Component {
 				<button className='smallButton' onClick={() => this.changeHiddens('deletePic', {thisfile})}>Delete Pic</button></div>
 				 <form onSubmit={()=> this.changeHiddens('editCaption', index)}>
 				<label>
-				Caption: <input type='text' onChange={this.handleChange} />
+				<input type='text' size='5' onChange={this.handleChange} />
 				</label>
+				<div className='smallText'>
 				<button type='submit' className='smallButton'>Edit Caption</button>
+				</div>
 				</form>
 				</div>				
 			);
