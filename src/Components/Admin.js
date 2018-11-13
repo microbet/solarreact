@@ -73,7 +73,10 @@ class Admin extends Component {
 				  {!this.state.upLoadHidden && <UploadPics admin={this.state.admin} picCategory={this.state.picCategory} /> }
 					{!this.state.captionHidden && <EditCaptions admin={this.state.admin} /> }
 				  <button className="mediumButton" onClick={(picCategory) => this.addpicClick('newsubpic')}>
-				  <p className="mediumText">add pic for this job</p>
+				  <br />
+				  <br />
+				  <br />
+				  <p className="smallText">add pic for this job</p>
 				  </button>
 				  </div>
 			);
@@ -205,8 +208,13 @@ class FileLS extends Component {
 		this.setState( { caption: event.target.value } );
 	}
 
+	// I think the json is ok now on delete, the file renaming from node is still off
+	// also if you start from no pics and just add them it's not naming them right
 	changeHiddens(control, imgfile) {  // changeHiddens doesn't seem like the right name anymore
-		console.log(imgfile);
+		// there were up to 1_3 and I deleted 1_1
+		// something might be wrong with captions not moving during swap
+		console.log("imagefile");
+		console.log(imgfile); // thisfile: 1_1.jpg
 		if (control === 'deletePic') {
 			const data = {
 				imgfile: imgfile, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
@@ -220,9 +228,11 @@ class FileLS extends Component {
 			let j = 0;
 			picsArr.forEach(function(element) {
 				console.log('at beginning of loop');
-				console.log(element);
+				console.log(element); // 
 				if (startRenaming) {
 					element[0] = element[0] - 1;
+					console.log("i");
+					console.log(i);
 					if (i === 1) {
 						element[1] = './img/1.jpg';
 						element[2] = 0;
@@ -231,10 +241,14 @@ class FileLS extends Component {
 						element[1] = './img/1_' + j + '.jpg';
 					}
 				}
-				if (element[1] !== "./img/" + imgfile.thisfile) {
+				console.log("imagefile.thisfile");
+				console.log(imgfile.thisfile); // 1_1.jpg
+				if (element[1] !== "./img/" + imgfile.thisfile || startRenaming) {
 					newPicsArr.push(element);
+					console.log("newpicsarr: ", newPicsArr);
 				} else {
 					startRenaming = true;
+					console.log("I got to startrenaming");
 				}
 				i++;
 				console.log('at end of loop');
