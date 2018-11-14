@@ -78,6 +78,10 @@ class Admin extends Component {
 				  <br />
 				  <p className="smallText">add pic for this job</p>
 				  </button>
+<br />
+<br />
+<br />
+<br />
 				  </div>
 			);
 		} else if (this.state.admin === "letussee") {
@@ -213,6 +217,7 @@ class FileLS extends Component {
 	changeHiddens(control, imgfile) {  // changeHiddens doesn't seem like the right name anymore
 		// there were up to 1_3 and I deleted 1_1
 		// something might be wrong with captions not moving during swap
+		// deleting the last picture works, but throws an error - having no pic causes an error
 		console.log("imagefile");
 		console.log(imgfile); // thisfile: 1_1.jpg
 		if (control === 'deletePic') {

@@ -119,12 +119,17 @@ class Carousel extends Component {
           >
             <div className="carousel-inner">
               <div className="carousel-item active">
+			  { this.state.mainpic ? (
                 <img
                   className="d-block w-100"
                   src={this.state.mainpic[1]}
                   alt="First slide"
                   id="firstslide"
                 />
+			      ) : (
+				   <div></div>
+				   )
+			 }
 
                 <div className="carousel-caption">
                   <p
@@ -132,7 +137,12 @@ class Carousel extends Component {
                     styles="background-color: rgba(200, 200, 200, 0.5);"
                     id="firstslidecaption"
                   >
-	    		{this.props.pics[0][3]}
+				  { this.props.pics[0] ? (
+					<span>{this.props.pics[0][3]}</span>
+					) : (
+					<span></span>
+					)
+				  }
                   </p>
                   <div>
                     <Pictures mainpic={mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
