@@ -14,7 +14,8 @@ class App extends Component {
 		// never be a huge amount, dunno what happens when there is
 		var db = new MicroDB();
 		this.state = {
-			pics : db.getData()
+			pics : db.getData(),
+			page: 1,
 		}
 	}
   render() {
