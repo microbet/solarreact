@@ -1,6 +1,7 @@
 import React, { Component } from 'react';
 import axios from 'axios';
 import ImageData from '../ImageData.json';
+import MicroDB from '../Tools/MicroDB';
 
 class Admin extends Component {
 	constructor() {
@@ -11,7 +12,7 @@ class Admin extends Component {
 			fileLsHidden: false,
 			captionHidden: true,
 			upLoadHidden: true, 
-			picCategory: ''
+			picCategory: '',
 		}
 	}
 
@@ -61,9 +62,10 @@ class Admin extends Component {
 
 	render() {
 		if (this.state.admin === "verified") { // logged in as admin
+			console.log("thispropsfamilyid = ", this.props.familyId);
 			return( // show them the login form
 				  <div>
-				  {!this.state.fileLsHidden && <FileLS admin={this.state.admin} changeHiddens={ () => this.setState( { 
+				  {!this.state.fileLsHidden && <FileLS admin={this.state.admin} familyId={this.props.familyId} changeHiddens={ () => this.setState( { 
 						  upLoadHidden: true,
 					 	 fileLsHidden: true,
 					 	 captionHidden: false
@@ -73,15 +75,10 @@ class Admin extends Component {
 				  {!this.state.upLoadHidden && <UploadPics admin={this.state.admin} picCategory={this.state.picCategory} /> }
 					{!this.state.captionHidden && <EditCaptions admin={this.state.admin} /> }
 				  <button className="mediumButton" onClick={(picCategory) => this.addpicClick('newsubpic')}>
-				  <br />
-				  <br />
-				  <br />
+				  <br /> <br /> <br />
 				  <p className="smallText">add pic for this job</p>
 				  </button>
-<br />
-<br />
-<br />
-<br />
+					<br /> <br /> <br /> <br />
 				  </div>
 			);
 		} else if (this.state.admin === "letussee") {
@@ -109,65 +106,6 @@ class Admin extends Component {
 }
 
 export default Admin
-
-class MicroDB {  // I tried various ways to not duplicated this and failed
-	// this is a microscopic database acting on pics array
-	// it's a little like a relational database, but not really
-	// the data is and must be very structured  id's go in order only
-	// children always immediately follow their parent
-	constructor(id, src, parent_id) {
-		this.id = 1;
-		this.src = src;
-		this.parent_id = parent_id;
-		this.pic = [];
-		this.getData();
-	}
-
-	getData() {
-		this.pics = ImageData;
-		return this.pics;
-	}
-
-	select(selection, condition) {
-		// condition is of form x=y
-		// I think I should probably return src and id everytime
-		var condArr = condition.split('=');
-		var condName = condArr[0];
-		var condVal = condArr[1];
-		if (condName === 'id') {  // this case is easy, id being ordered is enforced
-			condVal = parseInt(condVal, 10); // it will be an int, but just making sure 
-			var index = condVal - 1; // id is ALWAYS index+1
-			var thispic = this.pics[index]
-		}
-		if (selection === 'src') {
-			return (thispic);
-		}
-	}
-
-	getFamily(id) {
-		var famArr = [];
-		var i = id;
-		var len = this.pics.length;
-		// first go up the pic array looking for relatives
-		while (i < len) {
-			if ((this.pics[i-1][2] === this.pics[i][2]) || (this.pics[i][2] === this.pics[i-1][0])) { // either sibling or child
-				famArr.push(this.pics[i])
-				i++
-			}
-			else { break; }
-		}
-		// now go down the pic array looking for relatives
-		var j = id - 2;
-		while (j >= 0) {
-			if ((this.pics[j][2] === this.pics[j+1][2]) || (this.pics[j][0] === this.pics[id-1][2])) { // either sibling or child
-				famArr.unshift(this.pics[j]) // keep array sorted
-				j--
-			}
-			else { break; }
-		}
-		return famArr;
-	}
-}
 
 class FileLS extends Component {
 	constructor() {
@@ -201,9 +139,9 @@ class FileLS extends Component {
 	}
 
 	getPath(url) {
-		var splitup = url.split('/');
-		var src = splitup[splitup.length-1];
-		var srcArr = src.split('#');
+		let splitup = url.split('/');
+		let src = splitup[splitup.length-1];
+		let srcArr = src.split('#');
 		src = srcArr[0];
 		return src
 	}
@@ -212,55 +150,42 @@ class FileLS extends Component {
 		this.setState( { caption: event.target.value } );
 	}
 
-	// I think the json is ok now on delete, the file renaming from node is still off
-	// also if you start from no pics and just add them it's not naming them right
-	changeHiddens(control, imgfile) {  // changeHiddens doesn't seem like the right name anymore
-		// there were up to 1_3 and I deleted 1_1
-		// something might be wrong with captions not moving during swap
-		// deleting the last picture works, but throws an error - having no pic causes an error
-		console.log("imagefile");
-		console.log(imgfile); // thisfile: 1_1.jpg
+	changeHiddens(control, imgSrc) {  // changeHiddens doesn't seem like the right name anymore
 		if (control === 'deletePic') {
 			const data = {
-				imgfile: imgfile, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
+				imgSrc: imgSrc, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
 				jsondata: '', 
 			}
 			let newPicsArr = [];
 			let db = new MicroDB();
 			let picsArr = db.getData();
 			let startRenaming = false;
-			let i = 0;
-			let j = 0;
+			let srcFamNum = db.getFamNum(imgSrc);
+			let srcIsParent = db.isParent(imgSrc);
+			if (!srcIsParent) { let srcChildNum = db.getMyChildNum(imgSrc); }
+			let famNum = srcFamNum;
+			let thisChildNum, childNum, elementFamNum;
 			picsArr.forEach(function(element) {
-				console.log('at beginning of loop');
-				console.log(element); // 
+				elementFamNum = db.getFamNum(element[2]);
+				if (elementFamNum != srcFamNum) { startRenaming = false; }
 				if (startRenaming) {
-					element[0] = element[0] - 1;
-					console.log("i");
-					console.log(i);
-					if (i === 1) {
-						element[1] = './img/1.jpg';
+					element[0] = element[0] - 1; // always drop id element by one
+					if (srcIsParent) { // this element is a new parent
+						element[1] = './img/' + srcFamNum + '.jpg';
 						element[2] = 0;
 					} else {
-						j = i - 1;
-						element[1] = './img/1_' + j + '.jpg';
+						thisChildNum = childNum - 1;
+						element[1] = './img/' + famNum + '_' + thisChildNum + '.jpg';
 					}
 				}
-				console.log("imagefile.thisfile");
-				console.log(imgfile.thisfile); // 1_1.jpg
-				if (element[1] !== "./img/" + imgfile.thisfile || startRenaming) {
+				if (element[1] !== imgSrc || startRenaming) {
 					newPicsArr.push(element);
 					console.log("newpicsarr: ", newPicsArr);
 				} else {
 					startRenaming = true;
-					console.log("I got to startrenaming");
 				}
-				i++;
-				console.log('at end of loop');
-				console.log(element);
+				childNum = db.getMyChildNum(element);
 			});
-			console.log("newpicsaree");
-			console.log(newPicsArr);
 			data.jsondata = newPicsArr;
 			axios.post('http://localhost:5000/api/deletepic', data)  // swap pics in filesystem and rewrite json file
 			.then((res) => {
@@ -268,9 +193,8 @@ class FileLS extends Component {
 			});
 		}
 		if (control === 'editCaption') {
-			console.log("change the caption of picture with index " + imgfile + " to " + this.state.caption);
 			const data = {
-				imgfile: imgfile,
+				imgSrc: imgSrc,
 				newCaption: this.state.caption,
 			}
 			axios.post('http://localhost:5000/api/editCaption', data) // edit the caption
@@ -325,49 +249,33 @@ class FileLS extends Component {
 			console.log(res);
 		});
 
-		// window.location.reload(); // ok, I tried a lot of ways not to do this
 	}                                 // but this is just for admin
-	
-	getImgSrcArr() {
-		let imgsrc_arr = [];
-		this.state.filelist.forEach((element) => {
-			imgsrc_arr.push(['./img/' + element, element]);
-		});
-		imgsrc_arr.sort(); // prob not necessary, but not counting on file system sort
-		var img_arr = imgsrc_arr.map((thisimg, index) => {
-		//	var thissrc = thisimg[0] + '#' + Date.now();
-			let thissrc = thisimg[0];
-			let thisfile = thisimg[1];
-			return (
-				<div key={index}>
-				<img id={index} key={index} height='80' width='80' draggable='true' onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt='thumbnail house' className='img-thumbnail' src={thissrc} />
-				<div className='smallText'>
-				<button className='smallButton' onClick={() => this.changeHiddens('deletePic', {thisfile})}>Delete Pic</button></div>
-				 <form onSubmit={()=> this.changeHiddens('editCaption', index)}>
-				<label>
-				<input type='text' size='5' onChange={this.handleChange} />
-				</label>
-				<div className='smallText'>
-				<button type='submit' className='smallButton'>Edit Caption</button>
-				</div>
-				</form>
-				</div>				
-			);
-		});
-		return img_arr
-	}
 
 	render() {
-		var img_arr = this.getImgSrcArr();
+		const db = new MicroDB();
+		let famArr = db.getFamily(this.props.familyId);
+		console.log("famarr = ", famArr);
+			let thumbImgs = famArr.map((thisImgSrc, index) => 
+					<div key={index}>
+					<img id={index} key={index} height='80' width='80' draggable='true' onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt='thumbnail house' className='img-thumbnail' src={thisImgSrc} />
+					<div className='smallText'>
+					<button className='smallButton' onClick={() => this.changeHiddens('deletePic', {thisImgSrc})}>Delete Pic</button></div>
+					 <form onSubmit={()=> this.changeHiddens('editCaption', index)}>
+					<label>
+					<input type='text' size='5' onChange={this.handleChange} />
+					</label>
+					<div className='smallText'>
+					<button type='submit' className='smallButton'>Edit Caption</button>
+					</div>
+					</form>
+					</div>				
+			);
 
 		return(
-			<div>
 			<div className="adminstyle">
-			{img_arr}
-			{this.state.message}
+			{thumbImgs}
 			</div>
-			</div>
-		);
+		)
 	}
 }
 
@@ -389,22 +297,6 @@ class UploadPics extends Component { // left off here.  Form not working yet.
 				console.log('back from server');
 				console.log(res);
 			});
-		// ok, uploading isn't letting you pick if it's another project or another
-		// picture for the same project
-		// I forget where it renames the file
-		// I need to update the json when I upload a picture
-		/*
-		// need to update the ImageData file too
-		// for now I'm doing this in a separate call because uploading the image
-		// was a pain and I don't want to interfere with it
-		var db = new MicroDB();
-		var picsArr = db.getData();
-		picsArr.push([picsArr.length], "./img/
-		axios.post('http://localhost:5000/api/updateJson', data)  // swap pics in filesystem and rewrite json file
-		.then((res) => {
-			console.log(res);
-		});
-		*/
 	}
 
 	handleChange = event => {

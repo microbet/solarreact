@@ -4,6 +4,7 @@ import ImageData from './ImageData.json';
 import Head from './Components/Head';
 import JumboTron from './Components/JumboTron';
 import Admin from './Components/Admin';
+import MicroDB from './Tools/MicroDB';
 // import axios from 'axios';
 
 class App extends Component {
@@ -15,7 +16,7 @@ class App extends Component {
 		var db = new MicroDB();
 		this.state = {
 			pics : db.getData(),
-			page: 1,
+			familyId : 1,
 		}
 	}
   render() {
@@ -25,80 +26,13 @@ class App extends Component {
 	    <JumboTron />
 	    <Carousel pics={this.state.pics} />
 	    <br />
-	    <Admin />
+	    <Admin familyId={this.state.familyId} />
       </div>
 	 );
   }
 }
 
 export default App;
-
-// working on Auth0
-// https://medium.appbase.io/how-to-implement-authentication-for-your-react-app-cf09eef3bb0b
-// https://medium.appbase.io/securing-a-react-web-app-with-server-side-authentication-1b7c7dc55c16
-// domain = newenergy.auth0.com Client ID = sGfCvajG_5moTi6sntLfW8_C8ujWZPC8
-// need to understand each piece - working on History before just importing
-// https://www.youtube.com/watch?v=7nafaH9SddU
-// their history function
-
-class MicroDB {
-	// this is a microscopic database acting on pics array
-	// it's a little like a relational database, but not really
-	// the data is and must be very structured  id's go in order only
-	// children always immediately follow their parent
-	constructor(id, src, parent_id) {
-		this.id = 1;
-		this.src = src;
-		this.parent_id = parent_id;
-		this.pic = [];
-		this.getData();
-	}
-
-	getData() {
-		this.pics = ImageData;
-		return this.pics;
-	}
-
-	select(selection, condition) {
-		// condition is of form x=y
-		// I think I should probably return src and id everytime
-		var condArr = condition.split('=');
-		var condName = condArr[0];
-		var condVal = condArr[1];
-		if (condName === 'id') {  // this case is easy, id being ordered is enforced
-			condVal = parseInt(condVal, 10); // it will be an int, but typing is the rage 
-			var index = condVal - 1; // id is ALWAYS index+1
-			var thispic = this.pics[index]
-		}
-		if (selection === 'src') {
-			return (thispic);
-		}
-	}
-
-	getFamily(id) {
-		var famArr = [];
-		var i = id;
-		var len = this.pics.length;
-		// first go up the pic array looking for relatives
-		while (i < len) {
-			if ((this.pics[i-1][2] === this.pics[i][2]) || (this.pics[i][2] === this.pics[i-1][0])) { // either sibling or child
-				famArr.push(this.pics[i])
-				i++
-			}
-			else { break; }
-		}
-		// now go down the pic array looking for relatives
-		var j = id - 2;
-		while (j >= 0) {
-			if ((this.pics[j][2] === this.pics[j+1][2]) || (this.pics[j][0] === this.pics[id-1][2])) { // either sibling or child
-				famArr.unshift(this.pics[j]) // keep array sorted
-				j--
-			}
-			else { break; }
-		}
-		return famArr;
-	}
-}
 
 class Carousel extends Component {
 	constructor(props) {
@@ -192,7 +126,7 @@ class Pictures extends Component {
 	  var famArr = db.getFamily(mainpicID);
       var ImageSources = famArr.map(memberArr => {
 	      return (
-		      <ChildPic caption={memberArr[3]} src={memberArr[1]} key={memberArr[0]} id={memberArr[0]} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
+		      <ChildPic caption={memberArr[3]} src={memberArr} key={memberArr[0]} id={memberArr[0]} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
 	      );
         });
    }
