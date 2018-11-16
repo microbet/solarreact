@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import './App.css';
-import ImageData from './ImageData.json';
 import Head from './Components/Head';
 import JumboTron from './Components/JumboTron';
 import Admin from './Components/Admin';
@@ -16,7 +15,7 @@ class App extends Component {
 		var db = new MicroDB();
 		this.state = {
 			pics : db.getData(),
-			familyId : 1,
+			familyId : 4,
 		}
 	}
   render() {
@@ -24,7 +23,7 @@ class App extends Component {
       <div className="App">
 	    <Head />
 	    <JumboTron />
-	    <Carousel pics={this.state.pics} />
+	    <Carousel pics={this.state.pics} familyId={this.state.familyId} />
 	    <br />
 	    <Admin familyId={this.state.familyId} />
       </div>
@@ -37,13 +36,14 @@ export default App;
 class Carousel extends Component {
 	constructor(props) {
 		super(props);
-		var mainpic =  this.mainpic ? this.mainpic : this.props.pics[0] 
+		var mainpic =  this.mainpic ? this.mainpic : this.props.pics[this.props.familyId - 1] 
 		this.state = {
 			mainpic :  mainpic 
 			}
 	}
   render() {
 	  var mainpic = this.state.mainpic;
+	  var caption = this.props.pics[this.props.familyId-1][3];
     return (
       <div className="album py-5 bg-light">
         <div className="container">
@@ -72,8 +72,8 @@ class Carousel extends Component {
                     styles="background-color: rgba(200, 200, 200, 0.5);"
                     id="firstslidecaption"
                   >
-				  { this.props.pics[0] ? (
-					<span>{this.props.pics[0][3]}</span>
+				  { caption ? (
+					<span>{caption}</span>
 					) : (
 					<span></span>
 					)
@@ -123,10 +123,10 @@ class Pictures extends Component {
    if (this.props.mainpic) {
 	   var mainpicID = this.props.mainpic[0];
 	  var db = new MicroDB(); // it is not really a database
-	  var famArr = db.getFamily(mainpicID);
+	  var famArr = db.getFamily(mainpicID, false, true);
       var ImageSources = famArr.map(memberArr => {
 	      return (
-		      <ChildPic caption={memberArr[3]} src={memberArr} key={memberArr[0]} id={memberArr[0]} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
+		      <ChildPic caption={memberArr[3]} src={memberArr[1]} key={memberArr[0]} id={memberArr} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
 	      );
         });
    }
@@ -160,7 +160,7 @@ class ChildPic extends Component {
   }
 
 	handleClick(src, id, mainsrc, mainid) {
-		this.props.changeMain([id, src]) // this is sending info back to parent/grandparent 
+		this.props.changeMain(id) // this is sending info back to parent/grandparent 
 
 	//var text;
 		var temp = this.mainsrc;
