@@ -1,5 +1,6 @@
 import { Component } from 'react';
 import ImageData from '../ImageData.json';
+var S_IMG_PATH = './img/';
 
 class MicroDB extends Component {
 	// this is a microscopic database acting on pics array
@@ -36,6 +37,10 @@ class MicroDB extends Component {
 		}
 	}
 
+	getImgSrc(imgObj) {
+		return S_IMG_PATH + imgObj.family + '_' + imgObj.childNum + '.jpg';
+	}
+	
 	getFamily(imgObj, includeSelf=true) {
 		let famArr = [];
 		this.pics.forEach(function(element) {
@@ -48,12 +53,8 @@ class MicroDB extends Component {
 	}
 
 	getParent(familyId) {
-		console.log("familyId = ", familyId);
-		console.log("tpl = ", this.pics.length);
 		for (let i=0; i<this.pics.length;i++) {
-			console.log("i = ", i);
-			console.log("tpi = ", this.pics[i]);
-			if (this.pics[i].family === familyId && this.pic[i].childNum === 0) {
+			if (this.pics[i].family === familyId && this.pics[i].childNum === 0) {
 				return this.pics[i];
 			}
 		}

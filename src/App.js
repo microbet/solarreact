@@ -4,11 +4,6 @@ import Head from './Components/Head';
 import JumboTron from './Components/JumboTron';
 import Admin from './Components/Admin';
 import MicroDB from './Tools/MicroDB';
-var S_IMG_PATH = './img/';
-
-function getImgSrc(imgObj) {
-	return S_IMG_PATH + imgObj.family + '_' + imgObj.childNum + '.jpg';
-}
 
 class App extends Component {
 	constructor() {
@@ -19,7 +14,7 @@ class App extends Component {
 		var db = new MicroDB();
 		this.state = {
 			pics : db.getData(),
-			familyId : 2,
+			familyId : 1,
 			db: db,
 		}
 	}
@@ -63,7 +58,7 @@ class Carousel extends Component {
 			  { this.state.mainpic ? (
                 <img
                   className="d-block w-100"
-                  src={getImgSrc(this.state.mainpic)}
+                  src={this.props.db.getImgSrc(this.state.mainpic)}
                   alt="First slide"
                   id="firstslide"
                 />
@@ -86,7 +81,7 @@ class Carousel extends Component {
 				  }
                   </p>
                   <div>
-                    <Pictures mainpic={this.state.mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
+                    <Pictures db={this.props.db} mainpic={this.state.mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
                   </div>
                 </div>
               </div>
@@ -132,7 +127,7 @@ class Pictures extends Component {
 	  var famArr = db.getFamily(this.props.mainpic, false);
       var ImageSources = famArr.map(memberObj => {
 	      return (
-		      <ChildPic caption={memberObj.caption} childObj={memberObj} key={'childpic' + memberObj.childNum} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
+		      <ChildPic db={this.props.db} caption={memberObj.caption} childObj={memberObj} key={'childpic' + memberObj.childNum} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
 	      );
         });
    }
@@ -148,7 +143,7 @@ class ChildPic extends Component {
 		};
 		this.id = this.props.id;
 		this.mainpic = this.props.mainpic;
-		this.mainsrc = getImgSrc(this.mainpic);
+		this.mainsrc = this.props.db.getImgSrc(this.mainpic);
 	}
 
   mouseOut(src) {
@@ -187,7 +182,7 @@ class ChildPic extends Component {
         className="img-thumbnail"
         height="80"
         width="80"
-        src={getImgSrc(this.props.childObj)}
+        src={this.props.db.getImgSrc(this.props.childObj)}
 		alt="solar"
 	    key={'thumb' + this.props.childObj.childNum}
       />

@@ -288,10 +288,11 @@ class UploadPics extends Component { // left off here.  Form not working yet.
 	}
 
 	handleUpload = () => {
+		console.log("tfi = ", this.props.familyId);
 		const fd = new FormData();
 		fd.append('image', this.state.selectedFile, this.state.selectedFile.name);
 		fd.append('familyId', this.props.familyId);
-		fd.append('picCategory', this.props.picCategory);
+	//	fd.append('picCategory', this.props.picCategory);
 		axios.post('http://localhost:5000/api/imgupload', fd)
 			.then((res) => {
 				console.log('back from server');
