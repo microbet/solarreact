@@ -4,7 +4,11 @@ import Head from './Components/Head';
 import JumboTron from './Components/JumboTron';
 import Admin from './Components/Admin';
 import MicroDB from './Tools/MicroDB';
-// import axios from 'axios';
+var S_IMG_PATH = './img/';
+
+function getImgSrc(imgObj) {
+	return S_IMG_PATH + imgObj.family + '_' + imgObj.childNum + '.jpg';
+}
 
 class App extends Component {
 	constructor() {
@@ -15,7 +19,7 @@ class App extends Component {
 		var db = new MicroDB();
 		this.state = {
 			pics : db.getData(),
-			familyId : 4,
+			familyId : 2,
 		}
 	}
   render() {
@@ -36,14 +40,14 @@ export default App;
 class Carousel extends Component {
 	constructor(props) {
 		super(props);
-		var mainpic =  this.mainpic ? this.mainpic : this.props.pics[this.props.familyId - 1] 
+	//	var mainpic =  this.mainpic ? this.mainpic : this.props.pics[this.props.familyId - 1] 
 		this.state = {
-			mainpic :  mainpic 
+			mainpic :  this.props.pics[0], 
 			}
 	}
   render() {
-	  var mainpic = this.state.mainpic;
-	  var caption = this.props.pics[this.props.familyId-1][3];
+//	  var mainpic = this.state.mainpic;
+//	  var caption = this.props.pics[this.props.familyId-1][3];
     return (
       <div className="album py-5 bg-light">
         <div className="container">
@@ -57,7 +61,7 @@ class Carousel extends Component {
 			  { this.state.mainpic ? (
                 <img
                   className="d-block w-100"
-                  src={this.state.mainpic[1]}
+                  src={getImgSrc(this.state.mainpic)}
                   alt="First slide"
                   id="firstslide"
                 />
@@ -120,10 +124,13 @@ class Pictures extends Component {
       justifyContent: "space-around",
       alignItems: "flex-end"
     };
-   if (this.props.mainpic) {
-	   var mainpicID = this.props.mainpic[0];
-	  var db = new MicroDB(); // it is not really a database
-	  var famArr = db.getFamily(mainpicID, false, true);
+	if (this.props.mainpic) {// left off here
+	 //  var mainpicID = this.props.mainpic[0];
+		var db = new MicroDB(); // it is not really a database
+		var mainpicFamily = getFamily(this.props.mainpic);
+
+
+	  var famArr = db.getFamily(mainpic, false, true);
       var ImageSources = famArr.map(memberArr => {
 	      return (
 		      <ChildPic caption={memberArr[3]} src={memberArr[1]} key={memberArr[0]} id={memberArr} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />

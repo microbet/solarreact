@@ -1,1 +1,1 @@
-[[1,"./img/1.jpg",0,"beach"],[2,"./img/1_1.jpg",1,"fire"],[3,"./img/1_2.jpg",1,"backtruck"],[4,"./img/2.jpg",0,"stepvan"],[5,"./img/2_1.jpg",4,"sidestepvan"]]
+[{family:1,childNum:0,caption:"beach"},[family:1,childNum:1,caption:"fire"},{family:1,childNum:2,caption:"backtruck"},{family:2,childNum:0,caption:"stepvan"},{family:2,childNum:1,caption:"sidestepvan"}]
