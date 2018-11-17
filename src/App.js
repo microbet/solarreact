@@ -20,6 +20,7 @@ class App extends Component {
 		this.state = {
 			pics : db.getData(),
 			familyId : 2,
+			db: db,
 		}
 	}
   render() {
@@ -27,7 +28,7 @@ class App extends Component {
       <div className="App">
 	    <Head />
 	    <JumboTron />
-	    <Carousel pics={this.state.pics} familyId={this.state.familyId} />
+	    <Carousel pics={this.state.pics} familyId={this.state.familyId} db={this.state.db} />
 	    <br />
 	    <Admin familyId={this.state.familyId} />
       </div>
@@ -42,12 +43,13 @@ class Carousel extends Component {
 		super(props);
 	//	var mainpic =  this.mainpic ? this.mainpic : this.props.pics[this.props.familyId - 1] 
 		this.state = {
-			mainpic :  this.props.pics[0], 
+			mainpic :  this.props.db.getParent(this.props.familyId), 
 			}
 	}
   render() {
 //	  var mainpic = this.state.mainpic;
 //	  var caption = this.props.pics[this.props.familyId-1][3];
+	  console.log("mainpic = ", this.state.mainpic);
     return (
       <div className="album py-5 bg-light">
         <div className="container">
@@ -76,15 +78,15 @@ class Carousel extends Component {
                     styles="background-color: rgba(200, 200, 200, 0.5);"
                     id="firstslidecaption"
                   >
-				  { caption ? (
-					<span>{caption}</span>
+				  { this.state.mainpic.caption ? (
+					<span>{this.state.mainpic.caption}</span>
 					) : (
 					<span></span>
 					)
 				  }
                   </p>
                   <div>
-                    <Pictures mainpic={mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
+                    <Pictures mainpic={this.state.mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
                   </div>
                 </div>
               </div>
@@ -127,13 +129,10 @@ class Pictures extends Component {
 	if (this.props.mainpic) {// left off here
 	 //  var mainpicID = this.props.mainpic[0];
 		var db = new MicroDB(); // it is not really a database
-		var mainpicFamily = getFamily(this.props.mainpic);
-
-
-	  var famArr = db.getFamily(mainpic, false, true);
-      var ImageSources = famArr.map(memberArr => {
+	  var famArr = db.getFamily(this.props.mainpic, false);
+      var ImageSources = famArr.map(memberObj => {
 	      return (
-		      <ChildPic caption={memberArr[3]} src={memberArr[1]} key={memberArr[0]} id={memberArr} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
+		      <ChildPic caption={memberObj.caption} childObj={memberObj} key={'childpic' + memberObj.childNum} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
 	      );
         });
    }
@@ -142,17 +141,15 @@ class Pictures extends Component {
 }
 
 class ChildPic extends Component {
-  constructor(props) {
-    super(props);
-    this.state = {
-      opacity: "0.7"
-    };
-  this.src = this.props.src;
-  this.id = this.props.id;
-  this.mainpic = this.props.mainpic;
-	  this.mainsrc = this.mainpic[1]
-  this.mainid = this.mainpic[0];
-  }
+	constructor(props) {
+		super(props);
+		this.state = {
+			opacity: "0.7"
+		};
+		this.id = this.props.id;
+		this.mainpic = this.props.mainpic;
+		this.mainsrc = getImgSrc(this.mainpic);
+	}
 
   mouseOut(src) {
     this.setState({
@@ -166,15 +163,15 @@ class ChildPic extends Component {
     });
   }
 
-	handleClick(src, id, mainsrc, mainid) {
-		this.props.changeMain(id) // this is sending info back to parent/grandparent 
+	handleClick() {
+		this.props.changeMain(this.props.childObj) // this is sending info back to parent/grandparent 
 
 	//var text;
 		var temp = this.mainsrc;
 		this.mainsrc = this.src;
 		this.src = temp;
 
-	document.getElementById('firstslidecaption').innerHTML = this.props.caption;
+	document.getElementById('firstslidecaption').innerHTML = this.props.childObj.caption;
 }
 
   render() {
@@ -183,17 +180,16 @@ class ChildPic extends Component {
     };
     return (
       <img
-        onMouseOut={() => this.mouseOut(this.src)}
-        onMouseOver={() => this.mouseOver(this.src)}
-	onClick={() => this.handleClick(this.src, this.id, this.mainsrc, this.mainid)}
+        onMouseOut={() => this.mouseOut()}
+        onMouseOver={() => this.mouseOver()}
+		  onClick={() => this.handleClick()}
         style={thumbStyle}
         className="img-thumbnail"
         height="80"
         width="80"
-        src={this.src}
-	alt="solar"
-	    key={this.id}
-	    id={this.id}
+        src={getImgSrc(this.props.childObj)}
+		alt="solar"
+	    key={'thumb' + this.props.childObj.childNum}
       />
     );
   }

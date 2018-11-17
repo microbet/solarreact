@@ -36,18 +36,27 @@ class MicroDB extends Component {
 		}
 	}
 
-	getFamily(id, includeSelf=true, wholeArray=false) {
+	getFamily(imgObj, includeSelf=true) {
 		let famArr = [];
-		let thisElement;
-		let parentId = this.pics[id-1][2];
 		this.pics.forEach(function(element) {
-			if ((element[0] === id && includeSelf) || element[2] === id || (element[2] === parentId && element[2] !== 0 && element[0] !== id) || element[0] === parentId) {
-				if (wholeArray) { thisElement = element; }
-				else { thisElement = element[1]; }
-				famArr.push(thisElement)
+			if ((element.family === imgObj.family && includeSelf) || 
+			    (element.family === imgObj.family && element.childNum !== imgObj.childNum && !includeSelf)) {
+				famArr.push(element);
 			}
 		});
 		return famArr;
+	}
+
+	getParent(familyId) {
+		console.log("familyId = ", familyId);
+		console.log("tpl = ", this.pics.length);
+		for (let i=0; i<this.pics.length;i++) {
+			console.log("i = ", i);
+			console.log("tpi = ", this.pics[i]);
+			if (this.pics[i].family === familyId && this.pic[i].childNum === 0) {
+				return this.pics[i];
+			}
+		}
 	}
 	
 	getFamNum(fileName) {  // get the family number from a filename with or without path
