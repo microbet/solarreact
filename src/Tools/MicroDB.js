@@ -43,9 +43,16 @@ class MicroDB extends Component {
 	
 	getFamily(imgObj, includeSelf=true) {
 		let famArr = [];
+		console.log("imob = ", imgObj);
 		this.pics.forEach(function(element) {
+//			console.log("ef = ", element.family);
+//			console.log("of = ", imgObj.family);
+//			console.log("ec = ", element.childNum);
+//			console.log("ic = ", imgObj.childNum);
+//			console.log("is = ", includeSelf);
 			if ((element.family === imgObj.family && includeSelf) || 
 			    (element.family === imgObj.family && element.childNum !== imgObj.childNum && !includeSelf)) {
+				console.log("in here emelent = ", element);
 				famArr.push(element);
 			}
 		});

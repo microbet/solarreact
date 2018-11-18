@@ -64,14 +64,14 @@ class Admin extends Component {
 			console.log("thispropsfamilyid = ", this.props.familyId);
 			return( // show them the login form
 				  <div>
-				  {!this.state.fileLsHidden && <FileLS admin={this.state.admin} familyId={this.props.familyId} changeHiddens={ () => this.setState( { 
+				  {!this.state.fileLsHidden && <FileLS db={this.props.db} admin={this.state.admin} familyId={this.props.familyId} changeHiddens={ () => this.setState( { 
 						  upLoadHidden: true,
 					 	 fileLsHidden: true,
 					 	 captionHidden: false
 				  	})
 				  } />
 				}
-				  {!this.state.upLoadHidden && <UploadPics admin={this.state.admin} picCategory={this.state.picCategory} familyId={this.props.familyId} /> }
+				  {!this.state.upLoadHidden && <UploadPics db={this.props.db} admin={this.state.admin} picCategory={this.state.picCategory} familyId={this.props.familyId} /> }
 					{!this.state.captionHidden && <EditCaptions admin={this.state.admin} /> }
 					<br /> <br /> <br />
 				  <button className="mediumButton" onClick={(picCategory) => this.addpicClick('newsubpic')}>
@@ -156,17 +156,17 @@ class FileLS extends Component {
 				jsondata: '', 
 			}
 			let newPicsArr = [];
-			let db = new MicroDB();
-			let picsArr = db.getData();
+		//	let db = new MicroDB();
+			let picsArr = this.props.db.getData();
 			let startRenaming = false;
 			console.log("imgsrc = ", imgSrc);
-			let srcFamNum = db.getFamNum(imgSrc);
-			let srcIsParent = db.isParent(imgSrc);
+			let srcFamNum = this.props.db.getFamNum(imgSrc);
+			let srcIsParent = this.props.db.isParent(imgSrc);
 			let famNum = srcFamNum;
 			let thisChildNum, childNum, elementFamNum;
 			console.log("picsarr = ", picsArr);
 			picsArr.forEach(function(element) {
-				elementFamNum = db.getFamNum(element[1]);
+				elementFamNum = this.props.db.getFamNum(element[1]);
 				if (elementFamNum !== srcFamNum) { startRenaming = false; }
 				if (startRenaming) {
 					element[0] = element[0] - 1; // always drop id element by one
@@ -183,7 +183,7 @@ class FileLS extends Component {
 				} else {
 					startRenaming = true;
 				}
-				childNum = db.getChildNum(element);
+				childNum = this.props.db.getChildNum(element);
 			});
 			data.jsondata = newPicsArr;
 			axios.post('http://localhost:5000/api/deletepic', data)  // swap pics in filesystem and rewrite json file
@@ -218,8 +218,8 @@ class FileLS extends Component {
 		}
 		if (selectedPath === displacedPath) return; //dropped on itself
 			// I need to read the json file to switch in there
-		var db = new MicroDB();
-		var picsArr = db.getData();
+		//var db = new MicroDB();
+		var picsArr = this.props.db.getData();
 		var selectedExtended = "./img/" + data.selected;
 		var displacedExtended = "./img/" + data.displaced;
 		var firstindex = -1;
@@ -252,8 +252,8 @@ class FileLS extends Component {
 	}                                 // but this is just for admin
 
 	render() {
-		const db = new MicroDB();
-		let famArr = db.getFamily(this.props.familyId, true, true);
+//		const db = new MicroDB();
+		let famArr = this.props.db.getFamily(this.props.familyId, true, true);
 			let thumbImgs = famArr.map((thisImgSrc, index) => 
 					<div key={index}>
 					<img id={index} key={index} height='80' width='80' draggable='true' onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt='thumbnail house' className='img-thumbnail' src={thisImgSrc[1]} />
@@ -290,9 +290,8 @@ class UploadPics extends Component { // left off here.  Form not working yet.
 	handleUpload = () => {
 		console.log("tfi = ", this.props.familyId);
 		const fd = new FormData();
+		fd.append('familyId', this.props.familyId);  // what the hell why does order of these two lines matter
 		fd.append('image', this.state.selectedFile, this.state.selectedFile.name);
-		fd.append('familyId', this.props.familyId);
-	//	fd.append('picCategory', this.props.picCategory);
 		axios.post('http://localhost:5000/api/imgupload', fd)
 			.then((res) => {
 				console.log('back from server');

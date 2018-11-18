@@ -25,7 +25,7 @@ class App extends Component {
 	    <JumboTron />
 	    <Carousel pics={this.state.pics} familyId={this.state.familyId} db={this.state.db} />
 	    <br />
-	    <Admin familyId={this.state.familyId} />
+	    <Admin familyId={this.state.familyId} db={this.state.db} />
       </div>
 	 );
   }
@@ -123,9 +123,11 @@ class Pictures extends Component {
     };
 	if (this.props.mainpic) {// left off here
 	 //  var mainpicID = this.props.mainpic[0];
-		var db = new MicroDB(); // it is not really a database
-	  var famArr = db.getFamily(this.props.mainpic, false);
-      var ImageSources = famArr.map(memberObj => {
+	//	var db = new MicroDB(); // it is not really a database
+	  var famArr = this.props.db.getFamily(this.props.mainpic, false);
+      console.log("famarrr = ", famArr);
+	  console.log("tpm = ", this.props.mainpic);
+	  var ImageSources = famArr.map(memberObj => {
 	      return (
 		      <ChildPic db={this.props.db} caption={memberObj.caption} childObj={memberObj} key={'childpic' + memberObj.childNum} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />
 	      );
