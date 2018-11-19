@@ -202,29 +202,24 @@ class FileLS extends Component {
 		if (selectedPath === displacedPath) return; //dropped on itself
 			// I need to read the json file to switch in there
 		//var db = new MicroDB();
+		let selectedChildNum = parseInt(this.props.db.getChildNum(selectedPath));
+		let displacedChildNum = parseInt(this.props.db.getChildNum(displacedPath));
 		var picsArr = this.props.db.getData();
-		var selectedExtended = "./img/" + data.selected;
-		var displacedExtended = "./img/" + data.displaced;
-		var firstindex = -1;
-		var firstcaption = '';
-		var secondindex = -1;
-		var secondcaption = '';
-		for (let i=0; i<picsArr.length; i++) {
-			if (picsArr[i][1] === selectedExtended || picsArr[i][1] === displacedExtended) {
-				if (firstindex === -1) {
-					firstindex = i;
-					firstcaption = picsArr[i][3];
-					continue;
+		let selectedIndex;
+		let displacedIndex;
+		for (let i=0;i<picsArr.length;i++) {
+			if (picsArr[i].family === this.props.familyId) {
+				if (picsArr[i].childNum === selectedChildNum) {
+					selectedIndex = i;
 				}
-				if (secondindex === -1) {
-					secondindex = i;
-					secondcaption = picsArr[i][3];
-					continue;
+				if (picsArr[i].childNum === displacedChildNum) {
+					displacedIndex = i;
 				}
 			}
 		}
-		picsArr[firstindex][3] = secondcaption;
-		picsArr[secondindex][3] = firstcaption;
+		let temp = picsArr[selectedIndex].caption;
+		picsArr[selectedIndex].caption = picsArr[displacedIndex].caption;
+		picsArr[displacedIndex].caption = temp;
 		data.jsondata = picsArr;
 		// now I have to save this to the json file
 		axios.post('http://localhost:5000/api/imgswap', data)  // swap pics in filesystem and rewrite json file
