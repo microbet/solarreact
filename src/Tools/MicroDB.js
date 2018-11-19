@@ -41,6 +41,16 @@ class MicroDB extends Component {
 		return S_IMG_PATH + imgObj.family + '_' + imgObj.childNum + '.jpg';
 	}
 	
+	getFamilyFromId(familyId) {
+		let famArr = [];
+		this.pics.forEach(function(element) {
+			if (element.family === familyId) {
+				famArr.push(element);
+			}
+		});
+		return famArr;
+	}
+	
 	getFamily(imgObj, includeSelf=true) {
 		let famArr = [];
 		console.log("imob = ", imgObj);

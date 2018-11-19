@@ -149,42 +149,24 @@ class FileLS extends Component {
 		this.setState( { caption: event.target.value } );
 	}
 
-	changeHiddens(control, imgSrc) {  // changeHiddens doesn't seem like the right name anymore
+	changeHiddens(control, imgObj) {  // changeHiddens doesn't seem like the right name anymore
 		if (control === 'deletePic') {
 			const data = {
-				imgSrc: imgSrc, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
+				imgObj: imgObj, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
 				jsondata: '', 
 			}
 			let newPicsArr = [];
-		//	let db = new MicroDB();
 			let picsArr = this.props.db.getData();
-			let startRenaming = false;
-			console.log("imgsrc = ", imgSrc);
-			let srcFamNum = this.props.db.getFamNum(imgSrc);
-			let srcIsParent = this.props.db.isParent(imgSrc);
-			let famNum = srcFamNum;
-			let thisChildNum, childNum, elementFamNum;
-			console.log("picsarr = ", picsArr);
-			picsArr.forEach(function(element) {
-				elementFamNum = this.props.db.getFamNum(element[1]);
-				if (elementFamNum !== srcFamNum) { startRenaming = false; }
-				if (startRenaming) {
-					element[0] = element[0] - 1; // always drop id element by one
-					if (srcIsParent) { // this element is a new parent
-						element[1] = './img/' + srcFamNum + '.jpg';
-						element[2] = 0;
-					} else {
-						thisChildNum = childNum - 1;
-						element[1] = './img/' + famNum + '_' + thisChildNum + '.jpg';
-					}
+			for (let i=0; i<picsArr.length; i++) {
+				if (picsArr[i].family !== imgObj.family || picsArr[i].childNum < imgObj.childNum) {
+					newPicsArr.push(picsArr[i]);
+					continue;
 				}
-				if (element[1] !== imgSrc || startRenaming) {
-					newPicsArr.push(element);
-				} else {
-					startRenaming = true;
+				if (picsArr[i].childNum > imgObj.childNum) {
+					picsArr[i].childNum = picsArr[i].childNum - 1;
+					newPicsArr.push(picsArr[i]);
 				}
-				childNum = this.props.db.getChildNum(element);
-			});
+			}
 			data.jsondata = newPicsArr;
 			axios.post('http://localhost:5000/api/deletepic', data)  // swap pics in filesystem and rewrite json file
 			.then((res) => {
@@ -193,7 +175,7 @@ class FileLS extends Component {
 		}
 		if (control === 'editCaption') {
 			const data = {
-				imgSrc: imgSrc,  // this just needs to be the [0] of the element
+				imgObj: imgObj,  // this just needs to be the [0] of the element
 				newCaption: this.state.caption,
 			}
 			console.log("data dot imgsrc = ", data.imgSrc);
@@ -253,13 +235,13 @@ class FileLS extends Component {
 
 	render() {
 //		const db = new MicroDB();
-		let famArr = this.props.db.getFamily(this.props.familyId, true, true);
-			let thumbImgs = famArr.map((thisImgSrc, index) => 
+		let famArr = this.props.db.getFamilyFromId(this.props.familyId);
+			let thumbImgs = famArr.map((thisImgObj, index) => 
 					<div key={index}>
-					<img id={index} key={index} height='80' width='80' draggable='true' onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt='thumbnail house' className='img-thumbnail' src={thisImgSrc[1]} />
+					<img id={index} key={index} height='80' width='80' draggable='true' onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt='thumbnail house' className='img-thumbnail' src={this.props.db.getImgSrc(thisImgObj)} />
 					<div className='smallText'>
-					<button className='smallButton' onClick={() => this.changeHiddens('deletePic', thisImgSrc[1])}>Delete Pic</button></div>
-					 <form onSubmit={()=> this.changeHiddens('editCaption', thisImgSrc[0])}>
+					<button className='smallButton' onClick={() => this.changeHiddens('deletePic', thisImgObj)}>Delete Pic</button></div>
+					 <form onSubmit={()=> this.changeHiddens('editCaption', thisImgObj)}>
 					<label>
 					<input type='text' size='5' onChange={this.handleChange} />
 					</label>
