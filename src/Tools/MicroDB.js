@@ -53,16 +53,9 @@ class MicroDB extends Component {
 	
 	getFamily(imgObj, includeSelf=true) {
 		let famArr = [];
-		console.log("imob = ", imgObj);
 		this.pics.forEach(function(element) {
-//			console.log("ef = ", element.family);
-//			console.log("of = ", imgObj.family);
-//			console.log("ec = ", element.childNum);
-//			console.log("ic = ", imgObj.childNum);
-//			console.log("is = ", includeSelf);
 			if ((element.family === imgObj.family && includeSelf) || 
 			    (element.family === imgObj.family && element.childNum !== imgObj.childNum && !includeSelf)) {
-				console.log("in here emelent = ", element);
 				famArr.push(element);
 			}
 		});
@@ -78,10 +71,17 @@ class MicroDB extends Component {
 	}
 	
 	getFamNum(fileName) {  // get the family number from a filename with or without path
-		console.log("filename = ", fileName);
-		let regex = /.?([0-9]*)[_]{0,1}.?\.[a-zA-Z]{3,4}/g
+		let regex = /([0-9]*)_[0-9]*\.[jpg|png|gif|jpeg]/gi
 		let matches = regex.exec(fileName);
 		return matches[1];
+	}
+
+	getCaption(familyId) { // gets the caption of the parent
+		for (let i=0;i<this.pics.length;i++) {
+			if (this.pics[i].family === familyId && this.pics[i].childNum === 0) {
+				return this.pics[i].caption;
+			}
+		}
 	}
 	
 	getChildNum(fileName) {

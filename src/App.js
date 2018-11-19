@@ -50,18 +50,14 @@ class Carousel extends Component {
 
 	checkPicNavigation(targetNavigation) {
 		// check to see if there's anotherFam or not
-		console.log("did I goot here");
 		this.setState({anotherFam : false } );
 		this.setState({priorFam : false } );
-		console.log(this.props.familyId);
 		for (let i=0;i<this.props.pics.length;i++) {
 			if (this.props.pics[i].family > targetNavigation) {
 				this.setState({anotherFam : true });
 			}
 		}
-		console.log("tnavo = ", targetNavigation);
 		if (targetNavigation > 1) { this.setState({priorFam : true }); }
-		console.log(this.state.anotherFam);
 	}
 
 	handleClick(direction) {
@@ -72,17 +68,13 @@ class Carousel extends Component {
 		if (direction === "prev") {
 			targetFamily = this.props.familyId - 1;
 		}
-//		console.log(targetFamily);
 		this.setState({mainpic:this.props.db.getParent(targetFamily)});
-		console.log("tagetfam = ", targetFamily);
 		this.props.changeFamily(targetFamily) // this is sending info back to parent/grandparent 
 		this.checkPicNavigation(targetFamily);
+		document.getElementById('firstslidecaption').innerHTML = this.props.db.getCaption(targetFamily);
 	}
 
   render() {
-//	  var mainpic = this.state.mainpic;
-//	  var caption = this.props.pics[this.props.familyId-1][3];
-	  console.log("mainpic = ", this.state.mainpic);
     return (
       <div className="album py-5 bg-light">
         <div className="container">
@@ -171,12 +163,8 @@ class Pictures extends Component {
       justifyContent: "space-around",
       alignItems: "flex-end"
     };
-	if (this.props.mainpic) {// left off here
-	 //  var mainpicID = this.props.mainpic[0];
-	//	var db = new MicroDB(); // it is not really a database
+	if (this.props.mainpic) {
 	  var famArr = this.props.db.getFamily(this.props.mainpic, false);
-      console.log("famarrr = ", famArr);
-	  console.log("tpm = ", this.props.mainpic);
 	  var ImageSources = famArr.map(memberObj => {
 	      return (
 		      <ChildPic db={this.props.db} caption={memberObj.caption} childObj={memberObj} key={'childpic' + memberObj.childNum} mainpic={this.props.mainpic} changeMain={this.props.changeMain} />

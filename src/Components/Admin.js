@@ -44,7 +44,6 @@ class Admin extends Component {
 	}
  
 	addpicClick(picCategory) {
-		console.log(picCategory);
 		if (this.state.fileLsHidden) {
 			this.setState( { 
 				fileLsHidden: false,
@@ -61,7 +60,6 @@ class Admin extends Component {
 
 	render() {
 		if (this.state.admin === "verified") { // logged in as admin
-			console.log("thispropsfamilyid = ", this.props.familyId);
 			return( // show them the login form
 				  <div>
 				  {!this.state.fileLsHidden && <FileLS db={this.props.db} admin={this.state.admin} familyId={this.props.familyId} changeHiddens={ () => this.setState( { 
@@ -152,7 +150,7 @@ class FileLS extends Component {
 	changeHiddens(control, imgObj) {  // changeHiddens doesn't seem like the right name anymore
 		if (control === 'deletePic') {
 			const data = {
-				imgObj: imgObj, // number of image (they are one greater than index because I used 0 to mean something special - 'no parent' in another field)
+				imgObj: imgObj, 
 				jsondata: '', 
 			}
 			let newPicsArr = [];
@@ -175,11 +173,9 @@ class FileLS extends Component {
 		}
 		if (control === 'editCaption') {
 			const data = {
-				imgObj: imgObj,  // this just needs to be the [0] of the element
+				imgObj: imgObj, 
 				newCaption: this.state.caption,
 			}
-			console.log("data dot imgsrc = ", data.imgObj);
-			console.log("newcap = ", this.state.caption);
 			axios.post('http://localhost:5000/api/editCaption', data) // edit the caption
 			.then((res) => {
 				console.log(res);
@@ -187,11 +183,8 @@ class FileLS extends Component {
 		}
 	}// this triggers display the right component for editing captions and hide others
 
-	// something goes wrong when you drop an image on itself
 
 	drop(event) {  // dropped
-		// need to send a call to the server that this.state.selected and target.id
-		// need to change names 
 		var displacedPath = this.getPath(event.target.src);
 		var selectedPath = this.getPath(this.state.selected);
 		const data = {
@@ -200,10 +193,8 @@ class FileLS extends Component {
 			jsondata: ''
 		}
 		if (selectedPath === displacedPath) return; //dropped on itself
-			// I need to read the json file to switch in there
-		//var db = new MicroDB();
-		let selectedChildNum = parseInt(this.props.db.getChildNum(selectedPath));
-		let displacedChildNum = parseInt(this.props.db.getChildNum(displacedPath));
+		let selectedChildNum = parseInt(this.props.db.getChildNum(selectedPath), 10);
+		let displacedChildNum = parseInt(this.props.db.getChildNum(displacedPath), 10);
 		var picsArr = this.props.db.getData();
 		let selectedIndex;
 		let displacedIndex;
@@ -230,7 +221,6 @@ class FileLS extends Component {
 	}                                 // but this is just for admin
 
 	render() {
-//		const db = new MicroDB();
 		let famArr = this.props.db.getFamilyFromId(this.props.familyId);
 			let thumbImgs = famArr.map((thisImgObj, index) => 
 					<div key={index}>
@@ -256,7 +246,7 @@ class FileLS extends Component {
 	}
 }
 
-class UploadPics extends Component { // left off here.  Form not working yet.
+class UploadPics extends Component { 
 
 	constructor() {
 		super();
@@ -266,7 +256,6 @@ class UploadPics extends Component { // left off here.  Form not working yet.
 	}
 
 	handleUpload = () => {
-		console.log("tfi = ", this.props.familyId);
 		const fd = new FormData();
 		fd.append('familyId', this.props.familyId);  // what the hell why does order of these two lines matter
 		fd.append('image', this.state.selectedFile, this.state.selectedFile.name);
