@@ -23,7 +23,7 @@ class App extends Component {
       <div className="App">
 	    <Head />
 	    <JumboTron />
-	    <Carousel pics={this.state.pics} familyId={this.state.familyId} db={this.state.db} />
+	    <Carousel pics={this.state.pics} familyId={this.state.familyId} db={this.state.db} changeFamily={ (familyId) => this.setState({familyId}) } />
 	    <br />
 	    <Admin familyId={this.state.familyId} db={this.state.db} />
       </div>
@@ -39,8 +39,46 @@ class Carousel extends Component {
 	//	var mainpic =  this.mainpic ? this.mainpic : this.props.pics[this.props.familyId - 1] 
 		this.state = {
 			mainpic :  this.props.db.getParent(this.props.familyId), 
+			anotherFam : false,
+			priorFam : false,
 			}
 	}
+
+	componentDidMount() {
+		this.checkPicNavigation(this.props.familyId);
+	}
+
+	checkPicNavigation(targetNavigation) {
+		// check to see if there's anotherFam or not
+		console.log("did I goot here");
+		this.setState({anotherFam : false } );
+		this.setState({priorFam : false } );
+		console.log(this.props.familyId);
+		for (let i=0;i<this.props.pics.length;i++) {
+			if (this.props.pics[i].family > targetNavigation) {
+				this.setState({anotherFam : true });
+			}
+		}
+		console.log("tnavo = ", targetNavigation);
+		if (targetNavigation > 1) { this.setState({priorFam : true }); }
+		console.log(this.state.anotherFam);
+	}
+
+	handleClick(direction) {
+		let targetFamily;
+		if (direction === "next") {
+			targetFamily = this.props.familyId + 1;
+		}
+		if (direction === "prev") {
+			targetFamily = this.props.familyId - 1;
+		}
+//		console.log(targetFamily);
+		this.setState({mainpic:this.props.db.getParent(targetFamily)});
+		console.log("tagetfam = ", targetFamily);
+		this.props.changeFamily(targetFamily) // this is sending info back to parent/grandparent 
+		this.checkPicNavigation(targetFamily);
+	}
+
   render() {
 //	  var mainpic = this.state.mainpic;
 //	  var caption = this.props.pics[this.props.familyId-1][3];
@@ -88,24 +126,36 @@ class Carousel extends Component {
             </div>
           </div>
         </div>
+		 { this.state.priorFam ? (
         <a
           className="carousel-control-prev"
           href="#carouselExampleControls"
           role="button"
           data-slide="prev"
+		  	onClick={() => this.handleClick("prev")}
         >
           <span className="carousel-control-prev-icon" aria-hidden="true" />
           <span className="sr-only">Previous</span>
         </a>
+		 ) : (
+			 <span></span>
+		 )
+		 }
+		 { this.state.anotherFam ? (
         <a
           className="carousel-control-next"
           href="#carouselExampleControls"
           role="button"
           data-slide="next"
+		  	onClick={() => this.handleClick("next")}
         >
           <span className="carousel-control-next-icon" aria-hidden="true" />
           <span className="sr-only">Next</span>
         </a>
+		 ) : (
+			 <span></span>
+		 )
+		 }
       </div>
     );
   }
