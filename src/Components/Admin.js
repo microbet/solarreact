@@ -178,7 +178,8 @@ class FileLS extends Component {
 				imgObj: imgObj,  // this just needs to be the [0] of the element
 				newCaption: this.state.caption,
 			}
-			console.log("data dot imgsrc = ", data.imgSrc);
+			console.log("data dot imgsrc = ", data.imgObj);
+			console.log("newcap = ", this.state.caption);
 			axios.post('http://localhost:5000/api/editCaption', data) // edit the caption
 			.then((res) => {
 				console.log(res);
