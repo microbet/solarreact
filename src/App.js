@@ -25,7 +25,7 @@ class App extends Component {
 	    <JumboTron />
 	    <Carousel pics={this.state.pics} familyId={this.state.familyId} db={this.state.db} changeFamily={ (familyId) => this.setState({familyId}) } />
 	    <br />
-	    <Admin familyId={this.state.familyId} db={this.state.db} />
+	    <Admin familyId={this.state.familyId} db={this.state.db} changeFamily={ (familyId) => this.setState({familyId}) } />
       </div>
 	 );
   }

@@ -69,6 +69,16 @@ class MicroDB extends Component {
 			}
 		}
 	}
+
+	getNextFamilyId() {
+		let familyId = 1;
+		let thisFamilyId = 1;
+		for (let i=0; i<this.pics.length; i++) {
+			thisFamilyId = this.pics[i].family;
+			if (thisFamilyId > familyId) { familyId = thisFamilyId; }
+		}
+		return thisFamilyId + 1;
+	}
 	
 	getFamNum(fileName) {  // get the family number from a filename with or without path
 		let regex = /([0-9]*)_[0-9]*\.[jpg|png|gif|jpeg]/gi

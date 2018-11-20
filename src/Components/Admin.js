@@ -2,6 +2,9 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import MicroDB from '../Tools/MicroDB';
 
+// leaving off here
+// change it so there is no delete option if there is just one picture left
+// if you delete all the pics of a family you have to rename the other families
 class Admin extends Component {
 	constructor() {
 		super();
@@ -58,6 +61,10 @@ class Admin extends Component {
 		}
 	}
 
+	newProjectClick() {
+		this.props.changeFamily(this.props.db.getNextFamilyId());
+	}
+
 	render() {
 		if (this.state.admin === "verified") { // logged in as admin
 			return( // show them the login form
@@ -74,6 +81,9 @@ class Admin extends Component {
 					<br /> <br /> <br />
 				  <button className="mediumButton" onClick={(picCategory) => this.addpicClick('newsubpic')}>
 				  <p className="smallText">add pic for this job</p>
+				  </button>
+				  <button className="mediumButton" onClick={() => this.newProjectClick()}>
+				  <p className="smallText">create new project</p>
 				  </button>
 					<br /> <br /> <br /> <br />
 				  </div>
