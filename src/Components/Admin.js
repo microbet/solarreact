@@ -2,9 +2,6 @@ import React, { Component } from 'react';
 import axios from 'axios';
 import MicroDB from '../Tools/MicroDB';
 
-// leaving off here
-// change it so there is no delete option if there is just one picture left
-// if you delete all the pics of a family you have to rename the other families
 class Admin extends Component {
 	constructor() {
 		super();
@@ -231,12 +228,18 @@ class FileLS extends Component {
 	}                                 // but this is just for admin
 
 	render() {
+		let picsArr = this.props.db.getData();
 		let famArr = this.props.db.getFamilyFromId(this.props.familyId);
 			let thumbImgs = famArr.map((thisImgObj, index) => 
 					<div key={index}>
 					<img id={index} key={index} height='80' width='80' draggable='true' onDragStart={this.drag.bind(this)} onDrop={this.drop.bind(this)} onDragOver={this.allowDrop} alt='thumbnail house' className='img-thumbnail' src={this.props.db.getImgSrc(thisImgObj)} />
+				{ (picsArr.length>1) ? (
 					<div className='smallText'>
 					<button className='smallButton' onClick={() => this.changeHiddens('deletePic', thisImgObj)}>Delete Pic</button></div>
+				) : (
+					<div className='smallText'>
+					Can't delete.  Must have one picture.  Add another first if you want to delete this.</div>
+				) }
 					 <form onSubmit={()=> this.changeHiddens('editCaption', thisImgObj)}>
 					<label>
 					<input type='text' size='5' onChange={this.handleChange} />
