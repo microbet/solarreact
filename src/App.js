@@ -11,6 +11,10 @@ class App extends Component {
 		// let every component have access to all the data?
 		// convenient and I'm sure fine in this app because there could 
 		// never be a huge amount, dunno what happens when there is
+		// 
+		// I think I should ditch the bootstrap stuff because I can't 
+		// figure out where to make the next and prev arrows 
+		// work right
 		var db = new MicroDB();
 		this.state = {
 			pics : db.getData(),
@@ -76,6 +80,23 @@ class Carousel extends Component {
 
   render() {
     return (
+		 <div>
+		 <div styles="position: relative; left: 0; top: 0;">
+                <img
+                  className="mainpic"
+                  src={this.props.db.getImgSrc(this.state.mainpic)}
+                  alt="First slide"
+                  id="firstslide"
+		 				width="80%"
+		 				height="auto"
+                />
+		 			<img src="./arrow.png" className="arrowNav" />
+		 </div>
+		 <br />
+		 <br />
+		 <br />
+		 <br />
+		 <br />
       <div className="album py-5 bg-light">
         <div className="container">
           <div
@@ -149,6 +170,7 @@ class Carousel extends Component {
 		 )
 		 }
       </div>
+		 </div>
     );
   }
 }

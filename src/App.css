@@ -67,7 +67,21 @@ footer p {
   margin-bottom: .25rem;
 }
 
-<!-- below here was straight out of boostrap sites index.html, above was from album.css -->
+<!-- (following not exactly true) below here was straight out of boostrap sites index.html, above was from album.css -->
+
+.mainpic {
+	position: relative;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: auto;
+}
+
+.arrowNav {
+	position: relative;
+	top: 1%;
+	left: 1%;
+}
 
 .subimages {
 	display: flex;
