@@ -82,6 +82,12 @@ class Carousel extends Component {
     return (
 		 <div>
 		 <div styles="position: relative; left: 0; top: 0;">
+		 { this.state.priorFam ? (
+		  <svg onClick={() => this.handleClick("prev")} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="15" y1="6" x2="8" y2="12"></line><line x1="8" y1="12" x2="15" y2="18"></line><line x1="15" y1="0" x2="0" y2="12"></line><line x1="0" y1="12" x2="15" y2="24"></line></svg>
+		 ) : (
+					<span></span>
+					)
+				  }
                 <img
                   className="mainpic"
                   src={this.props.db.getImgSrc(this.state.mainpic)}
@@ -90,86 +96,31 @@ class Carousel extends Component {
 		 				width="80%"
 		 				height="auto"
                 />
-		 			<img src="./arrow.png" className="arrowNav" />
-		 </div>
-		 <br />
-		 <br />
-		 <br />
-		 <br />
-		 <br />
-      <div className="album py-5 bg-light">
-        <div className="container">
-          <div
-            id="carouselExampleControls"
-            className="carousel slide"
-            data-ride="carousel"
-          >
-            <div className="carousel-inner">
-              <div className="carousel-item active">
-			  { this.state.mainpic ? (
-                <img
-                  className="d-block w-100"
-                  src={this.props.db.getImgSrc(this.state.mainpic)}
-                  alt="First slide"
-                  id="firstslide"
-                />
-			      ) : (
-				   <div></div>
-				   )
-			 }
+		 { this.state.anotherFam ? (
+		  <svg onClick={() => this.handleClick("next")} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="8" y1="6" x2="15" y2="12"></line><line x1="15" y1="12" x2="8" y2="18"></line><line x1="8" y1="0" x2="23" y2="12"></line><line x1="23" y1="12" x2="8" y2="24"></line></svg>
+		 ) : (
+			 <span></span>
+		 )
+		 }
+                  <div>
+                    <Pictures db={this.props.db} mainpic={this.state.mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
+                  </div>
+
 
                 <div className="carousel-caption">
                   <p
                     className="overimage"
                     styles="background-color: rgba(200, 200, 200, 0.5);"
                     id="firstslidecaption"
-                  >
+                  ></p>
 				  { this.state.mainpic.caption ? (
 					<span>{this.state.mainpic.caption}</span>
 					) : (
 					<span></span>
 					)
 				  }
-                  </p>
-                  <div>
-                    <Pictures db={this.props.db} mainpic={this.state.mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-		 { this.state.priorFam ? (
-        <a
-          className="carousel-control-prev"
-          href="#carouselExampleControls"
-          role="button"
-          data-slide="prev"
-		  	onClick={() => this.handleClick("prev")}
-        >
-          <span className="carousel-control-prev-icon" aria-hidden="true" />
-          <span className="sr-only">Previous</span>
-        </a>
-		 ) : (
-			 <span></span>
-		 )
-		 }
-		 { this.state.anotherFam ? (
-        <a
-          className="carousel-control-next"
-          href="#carouselExampleControls"
-          role="button"
-          data-slide="next"
-		  	onClick={() => this.handleClick("next")}
-        >
-          <span className="carousel-control-next-icon" aria-hidden="true" />
-          <span className="sr-only">Next</span>
-        </a>
-		 ) : (
-			 <span></span>
-		 )
-		 }
-      </div>
+		 </div>
+		 </div>
 		 </div>
     );
   }
