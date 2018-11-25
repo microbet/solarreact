@@ -173,21 +173,33 @@ class FileLS extends Component {
 				}
 			}
 			data.jsondata = newPicsArr;
-			axios.post('http://localhost:5000/api/deletepic', data)  // swap pics in filesystem and rewrite json file
+			axios.post('http://localhost:5000/api/deletePic', data)  // swap pics in filesystem and rewrite json file
 			.then((res) => {
 				console.log(res);
 			});
 		}
-		if (control === 'editCaption') {
+	}
+
+	captionEditor(event, imgObj) {
+		/*
+		const fd = new FormData();
+		fd.append('familyId', this.props.familyId);  // what the hell why does order of these two lines matter
+		fd.append('image', this.state.selectedFile, this.state.selectedFile.name);
+		*/
 			const data = {
 				imgObj: imgObj, 
 				newCaption: this.state.caption,
+				withCredentials: true,
 			}
+	//		const fd = new FormData();
+	//		fd.append('imgObj', imgObj);  // what the hell why does order of these two lines matter
+	//		fd.append('newCaption', this.state.caption);
 			axios.post('http://localhost:5000/api/editCaption', data) // edit the caption
+	//		axios.post('http://localhost:5000/api/editCaption', fd) // edit the caption
 			.then((res) => {
 				console.log(res);
 			});
-		}
+			event.preventDefault();
 	}// this triggers display the right component for editing captions and hide others
 
 
@@ -240,7 +252,7 @@ class FileLS extends Component {
 					<div className='smallText'>
 					Can't delete.  Must have one picture.  Add another first if you want to delete this.</div>
 				) }
-					 <form onSubmit={()=> this.changeHiddens('editCaption', thisImgObj)}>
+					 <form onSubmit={(event) => this.captionEditor(event, thisImgObj)}>
 					<label>
 					<input type='text' size='5' onChange={this.handleChange} />
 					</label>

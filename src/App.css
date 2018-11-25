@@ -71,16 +71,22 @@ footer p {
 
 .mainpic {
 	position: relative;
-	top: 0;
-	left: 0;
-	width: 100%;
-	height: auto;
+	text-align: center;
 }
 
 .arrowNav {
 	position: relative;
 	top: 1%;
 	left: 1%;
+}
+
+.caption {
+	position: absolute;
+	top: 90%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	background-color: rgba(200, 200, 200, 0.5);
+	color: white;
 }
 
 .subimages {

@@ -88,14 +88,20 @@ class Carousel extends Component {
 					<span></span>
 					)
 				  }
+		 <div className="mainpic">
                 <img
-                  className="mainpic"
                   src={this.props.db.getImgSrc(this.state.mainpic)}
                   alt="First slide"
                   id="firstslide"
 		 				width="80%"
-		 				height="auto"
                 />
+				  { this.state.mainpic.caption ? (
+					<div className="caption"> &nbsp; &nbsp; {this.state.mainpic.caption} &nbsp; &nbsp;</div>
+					) : (
+					<span></span>
+					)
+				  }
+		 </div>
 		 { this.state.anotherFam ? (
 		  <svg onClick={() => this.handleClick("next")} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="8" y1="6" x2="15" y2="12"></line><line x1="15" y1="12" x2="8" y2="18"></line><line x1="8" y1="0" x2="23" y2="12"></line><line x1="23" y1="12" x2="8" y2="24"></line></svg>
 		 ) : (
@@ -107,19 +113,6 @@ class Carousel extends Component {
                   </div>
 
 
-                <div className="carousel-caption">
-                  <p
-                    className="overimage"
-                    styles="background-color: rgba(200, 200, 200, 0.5);"
-                    id="firstslidecaption"
-                  ></p>
-				  { this.state.mainpic.caption ? (
-					<span>{this.state.mainpic.caption}</span>
-					) : (
-					<span></span>
-					)
-				  }
-		 </div>
 		 </div>
 		 </div>
     );
@@ -179,7 +172,9 @@ class ChildPic extends Component {
 		this.mainsrc = this.src;
 		this.src = temp;
 
-	document.getElementById('firstslidecaption').innerHTML = this.props.childObj.caption;
+//	document.getElementById('firstslidecaption').innerHTML = this.props.childObj.caption;
+		//	this should be sending mainsrc.caption or something
+		//	maybe it works fine now
 }
 
   render() {
