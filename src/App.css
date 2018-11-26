@@ -70,6 +70,10 @@ footer p {
 <!-- (following not exactly true) below here was straight out of boostrap sites index.html, above was from album.css -->
 
 .mainpic {
+	display: flex;
+	flex-direction: row;
+	align-items: flex-start;
+	width: 80%;
 	position: relative;
 	text-align: center;
 }
@@ -81,11 +85,12 @@ footer p {
 }
 
 .caption {
-	position: absolute;
-	top: 90%;
+	position: relative;
+	bottom: 25px;
 	left: 50%;
+	width: 80%;
 	transform: translate(-50%, -50%);
-	background-color: rgba(200, 200, 200, 0.5);
+	background-color: rgba(150, 150, 150, 0.5);
 	color: white;
 }
 

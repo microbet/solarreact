@@ -75,25 +75,27 @@ class Carousel extends Component {
 		this.setState({mainpic:this.props.db.getParent(targetFamily)});
 		this.props.changeFamily(targetFamily) // this is sending info back to parent/grandparent 
 		this.checkPicNavigation(targetFamily);
-		document.getElementById('firstslidecaption').innerHTML = this.props.db.getCaption(targetFamily);
+	//	document.getElementById('firstslidecaption').innerHTML = this.props.db.getCaption(targetFamily);
 	}
 
   render() {
     return (
+		<div>
+		 <div className="mainpic">
 		 <div>
-		 <div styles="position: relative; left: 0; top: 0;">
 		 { this.state.priorFam ? (
 		  <svg onClick={() => this.handleClick("prev")} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="15" y1="6" x2="8" y2="12"></line><line x1="8" y1="12" x2="15" y2="18"></line><line x1="15" y1="0" x2="0" y2="12"></line><line x1="0" y1="12" x2="15" y2="24"></line></svg>
 		 ) : (
 					<span></span>
 					)
 				  }
-		 <div className="mainpic">
+		 </div>
+		 <div>
                 <img
                   src={this.props.db.getImgSrc(this.state.mainpic)}
                   alt="First slide"
                   id="firstslide"
-		 				width="80%"
+		 		  width="80%"	
                 />
 				  { this.state.mainpic.caption ? (
 					<div className="caption"> &nbsp; &nbsp; {this.state.mainpic.caption} &nbsp; &nbsp;</div>
@@ -101,20 +103,20 @@ class Carousel extends Component {
 					<span></span>
 					)
 				  }
-		 </div>
+		</div>
+		<div>
 		 { this.state.anotherFam ? (
 		  <svg onClick={() => this.handleClick("next")} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="8" y1="6" x2="15" y2="12"></line><line x1="15" y1="12" x2="8" y2="18"></line><line x1="8" y1="0" x2="23" y2="12"></line><line x1="23" y1="12" x2="8" y2="24"></line></svg>
 		 ) : (
 			 <span></span>
 		 )
 		 }
+		 </div>
+		 </div>
                   <div>
                     <Pictures db={this.props.db} mainpic={this.state.mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
                   </div>
-
-
-		 </div>
-		 </div>
+				  </div>
     );
   }
 }
