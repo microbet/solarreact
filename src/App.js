@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import { Column, Row } from 'simple-flexbox';
 import './App.css';
 import Head from './Components/Head';
 import JumboTron from './Components/JumboTron';
@@ -15,6 +16,11 @@ class App extends Component {
 		// I think I should ditch the bootstrap stuff because I can't 
 		// figure out where to make the next and prev arrows 
 		// work right
+		//
+		// switching images doesn't work on the second
+		// set of images and when doing admin on family 2 it shouldn't
+		// send you back to family one each time
+		//
 		var db = new MicroDB();
 		this.state = {
 			pics : db.getData(),
@@ -80,39 +86,39 @@ class Carousel extends Component {
 
   render() {
     return (
-		<div>
-		 <div className="mainpic">
 		 <div>
+		<Row vertical='center' horizontal='center'>
+		 <Column alignContent='start'>
 		 { this.state.priorFam ? (
 		  <svg onClick={() => this.handleClick("prev")} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="15" y1="6" x2="8" y2="12"></line><line x1="8" y1="12" x2="15" y2="18"></line><line x1="15" y1="0" x2="0" y2="12"></line><line x1="0" y1="12" x2="15" y2="24"></line></svg>
 		 ) : (
 					<span></span>
 					)
 				  }
-		 </div>
-		 <div>
+		 </Column>
+		 <Column horizontal='center' style={{ backgroundColor: '#cccccc' }}>
                 <img
                   src={this.props.db.getImgSrc(this.state.mainpic)}
                   alt="First slide"
                   id="firstslide"
-		 		  width="80%"	
+		 		  width="100%"	
                 />
 				  { this.state.mainpic.caption ? (
-					<div className="caption"> &nbsp; &nbsp; {this.state.mainpic.caption} &nbsp; &nbsp;</div>
+					<div> &nbsp; &nbsp; {this.state.mainpic.caption} &nbsp; &nbsp;</div>
 					) : (
 					<span></span>
 					)
 				  }
-		</div>
-		<div>
+		 </Column>
+		 <Column alignItems='start'>
 		 { this.state.anotherFam ? (
 		  <svg onClick={() => this.handleClick("next")} xmlns="http://www.w3.org/2000/svg" width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="mr-2"><line x1="8" y1="6" x2="15" y2="12"></line><line x1="15" y1="12" x2="8" y2="18"></line><line x1="8" y1="0" x2="23" y2="12"></line><line x1="23" y1="12" x2="8" y2="24"></line></svg>
 		 ) : (
 			 <span></span>
 		 )
 		 }
-		 </div>
-		 </div>
+		 </Column>
+		 </Row>
                   <div>
                     <Pictures db={this.props.db} mainpic={this.state.mainpic} changeMain={ (mainpic) => this.setState({mainpic})} />
                   </div>

@@ -11,14 +11,13 @@ class Head extends Component {
           <div className="row">
             <div className="col-sm-8 col-md-7 py-4">
               <h4 className="text-white">About</h4>
-              <p className="text-muted">Jay Hirsch General and Electrical has been designing and installing photovoltaic systems since 2008. Committment to our clients for the long term is our number one specialty.  Not far behind that it flexibility.  We can do anything from just design, to helping homeowners, to turnkey installations of small or large systems.  We work with string and microinverters, grid-tied, hybrid and off grid systems.  We have a general contractor's license as well as electrical and can do any work on roofing or electrical service upgrades that may be needed along with solar installation.  We work for homeowners and corporations as prime or sub-contractors.</p>
+              <p className="text-muted" align="justify">Jay Hirsch General and Electrical has been designing and installing photovoltaic systems since 2008. Committment to our clients for the long term is our number one specialty.  Not far behind that it flexibility.  We can do anything from just design, to helping homeowners, to turnkey installations of small or large systems.  We work with string and microinverters, grid-tied, hybrid and off grid systems.  We have a general contractor's license as well as electrical and can do any work on roofing or electrical service upgrades that may be needed along with solar installation.  We work for homeowners and corporations as prime or sub-contractors.</p>
             </div>
             <div className="col-sm-4 offset-md-1 py-4">
               <h4 className="text-white">Contact</h4>
               <ul className="list-unstyled">
-                <li><a href="" className="text-white">Follow on Twitter</a></li>
-                <li><a href="" className="text-white">Like on Facebook</a></li>
-                <li><a href="" className="text-white">Email me</a></li>
+                <li><a href="" className="text-white">jay.newenergy@gmail.com</a></li>
+                <li><a href="" className="text-white">844-765-2624</a></li>
               </ul>
             </div>
           </div>
