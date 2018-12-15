@@ -120,6 +120,7 @@ class FileLS extends Component {
 			displaced: '',
 			message: '',
 			caption: '',
+			imageNewSize: '',
 		}
 	}
 	
@@ -153,6 +154,10 @@ class FileLS extends Component {
 	handleChange = event => {
 		this.setState( { caption: event.target.value } );
 	}
+
+	handleResizeChange = event => {
+		this.setState( { imageNewSize: event.target.value } );
+	} // should be one function with handleChange
 
 	changeHiddens(control, imgObj) {  // changeHiddens doesn't seem like the right name anymore
 		if (control === 'deletePic') {
@@ -201,6 +206,18 @@ class FileLS extends Component {
 			});
 			event.preventDefault();
 	}// this triggers display the right component for editing captions and hide others
+
+	imageResize(event, imgObj) {
+		const data = {
+			imgObj: imgObj,
+			imageNewSize: this.state.imageNewSize,
+		}
+		axios.post('http://localhost:5000/api/imageResize', data)
+		.then((res) => {
+			console.log(res);
+		});
+		event.preventDefault();
+	}
 
 
 	drop(event) {  // dropped
@@ -260,6 +277,17 @@ class FileLS extends Component {
 					<button type='submit' className='smallButton'>Edit Caption</button>
 					</div>
 					</form>
+
+					 <form onSubmit={(event) => this.imageResize(event, thisImgObj)}>
+					<label>
+					<input type='text' size='5' onChange={this.handleResizeChange} />
+					</label>
+					<div className='smallText'>
+					<button type='submit' className='smallButton'>Resize (hxw eg "300x500")</button>
+					</div>
+					</form>
+
+
 					</div>				
 			);
 
